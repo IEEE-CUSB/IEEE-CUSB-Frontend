@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
-
-type FilterType = 'All' | 'Technical' | 'Non-Technical' | 'Social';
+import type { Category } from '@/shared/types/category.types';
 
 interface WorkshopsFilterBarProps {
-  activeFilter: FilterType;
-  onFilterChange: (filter: FilterType) => void;
+  activeFilter: string;
+  onFilterChange: (filter: string) => void;
   search: string;
   onSearchChange: (search: string) => void;
   darkMode?: boolean;
+  categories?: Category[];
 }
 
 export const WorkshopsFilterBar = ({
@@ -16,6 +16,7 @@ export const WorkshopsFilterBar = ({
   search,
   onSearchChange,
   darkMode,
+  categories = [],
 }: WorkshopsFilterBarProps) => {
   return (
     <motion.div
@@ -51,70 +52,24 @@ export const WorkshopsFilterBar = ({
           All
         </motion.button>
 
-        <motion.button
-          onClick={() => onFilterChange('Technical')}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.2 }}
-          className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-            activeFilter === 'Technical'
-              ? 'bg-primary text-white'
-              : darkMode
-                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Technical
-        </motion.button>
-
-        <motion.button
-          onClick={() => onFilterChange('Non-Technical')}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.2 }}
-          className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-            activeFilter === 'Non-Technical'
-              ? 'bg-primary text-white'
-              : darkMode
-                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-          </svg>
-          Non-Technical
-        </motion.button>
-
-        <motion.button
-          onClick={() => onFilterChange('Social')}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.2 }}
-          className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-            activeFilter === 'Social'
-              ? 'bg-primary text-white'
-              : darkMode
-                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Social
-        </motion.button>
+        {categories.map((category) => (
+          <motion.button
+            key={category.id}
+            onClick={() => onFilterChange(category.name)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+              activeFilter === category.name
+                ? 'bg-primary text-white'
+                : darkMode
+                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            {category.name}
+          </motion.button>
+        ))}
       </div>
 
       {/* Search and Sort Group */}

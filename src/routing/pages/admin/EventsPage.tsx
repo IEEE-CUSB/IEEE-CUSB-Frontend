@@ -26,6 +26,7 @@ import toast from 'react-hot-toast';
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { CategoriesTab } from "@/features/admin/components/categoryAdminPanel/CategoriesTab";
 import { CategoryType } from "@/shared/types/category.types";
+import { useGetCategories } from '@/shared/queries/categories/categories.queries';
 
 // Helper function to format date
 const formatDate = (dateString: string): string => {
@@ -60,6 +61,7 @@ export const EventsPage = () => {
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
   
   /* API hooks */
+  const { data: categoriesData } = useGetCategories({ type: CategoryType.EVENT, limit: 100 });
   const { data, isLoading } = useEvents({ page, limit, search: debouncedSearch, category: filterValues.category });
   const createEventMutation = useCreateEvent();
   const updateEventMutation = useUpdateEvent();
@@ -370,11 +372,10 @@ export const EventsPage = () => {
             key: 'category',
             label: 'Category',
             placeholder: 'All Categories',
-            options: [
-              { label: 'Technical', value: 'Technical' },
-              { label: 'Non-Technical', value: 'Non-Technical' },
-              { label: 'Social', value: 'Social' },
-            ],
+            options: categoriesData?.categories.map(c => ({
+              label: c.name,
+              value: c.name,
+            })) || [],
           },
         ]}
         filterValues={filterValues}

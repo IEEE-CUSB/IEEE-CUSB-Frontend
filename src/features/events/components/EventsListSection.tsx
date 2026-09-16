@@ -5,8 +5,10 @@ import { useEvents } from '@/shared/queries/events';
 import { Pagination } from '@/shared/components/ui/Pagination';
 import type { Event } from '@/shared/types/events.types';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { useGetCategories } from '@/shared/queries/categories/categories.queries';
+import { CategoryType } from '@/shared/types/category.types';
 
-type FilterType = 'All' | 'Technical' | 'Non-Technical' | 'Social';
+type FilterType = string;
 
 // Helper function to determine event status based on dates
 const getEventStatus = (event: Event): 'Upcoming' | 'Ongoing' | 'Completed' => {
@@ -71,9 +73,12 @@ export const EventsListSection = () => {
   const [page, setPage] = useState(1);
   const limit = 12;
 
+  const { data: categoriesData } = useGetCategories({ type: CategoryType.EVENT, limit: 100 });
+
   const { data, isLoading, isError, error, isFetching } = useEvents({
     page,
     limit,
+    category: activeFilter !== 'All' ? activeFilter : undefined,
   });
 
   // Safely extract events array - handle different response structures
@@ -82,10 +87,7 @@ export const EventsListSection = () => {
 
   // Transform and filter events
   const getFilteredEvents = () => {
-    const transformedEvents = events.map(transformEvent);
-
-    if (activeFilter === 'All') return transformedEvents;
-    return transformedEvents.filter(event => event.category === activeFilter);
+    return events.map(transformEvent);
   };
 
   const filteredEvents = getFilteredEvents();
@@ -107,6 +109,7 @@ export const EventsListSection = () => {
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
             darkMode={isDark}
+            categories={categoriesData?.categories}
           />
 
           {/* Loading skeleton grid */}
@@ -179,6 +182,7 @@ export const EventsListSection = () => {
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
           darkMode={isDark}
+          categories={categoriesData?.categories}
         />
 
         {/* Empty state */}
