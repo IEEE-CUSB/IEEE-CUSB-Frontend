@@ -38,7 +38,7 @@ export const categoriesApi = {
 
   getCategoryUsage: async (id: string): Promise<number> => {
     const response = await apiClient.get<{ message: string; data: { usageCount: number } }>(
-      `${API_ENDPOINTS.CATEGORIES.GET_ALL}/${id}/usage`
+      `/admin/categories/${id}/usage`
     );
     return response.data.data.usageCount;
   },

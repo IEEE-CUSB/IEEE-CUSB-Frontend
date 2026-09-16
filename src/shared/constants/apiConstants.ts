@@ -108,7 +108,7 @@ export const API_ENDPOINTS = {
 
   CATEGORIES: {
     CREATE: '/admin/categories',
-    GET_ALL: '/admin/categories',
+    GET_ALL: '/categories',
     UPDATE: (id: string) => `/admin/categories/${id}`,
     DELETE: (id: string) => `/admin/categories/${id}`,
   },
