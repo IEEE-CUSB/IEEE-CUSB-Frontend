@@ -19,13 +19,14 @@ export const committeeApi = {
   // ── Categories ──────────────────────────────────────────
 
   getCategories: async (params?: PaginationParams): Promise<PaginatedPayload<CommitteeCategory, 'categories'>> => {
+    const defaultParams = { type: 'COMMITTEE' };
     const filteredParams = params
       ? Object.fromEntries(
-          Object.entries(params)
+          Object.entries({ ...defaultParams, ...params })
             .filter(([_, v]) => v !== undefined && v !== '')
             .map(([k, v]) => [k, String(v)])
         )
-      : undefined;
+      : defaultParams;
 
     const response = await apiClient.get<
       BackendPaginatedResponse<CommitteeCategory, 'categories'>
@@ -34,9 +35,10 @@ export const committeeApi = {
   },
 
   createCategory: async (data: CreateCategory): Promise<CommitteeCategory> => {
+    const payload = { ...data, type: 'COMMITTEE' };
     const response = await apiClient.post<
       CommitteeApiResponse<CommitteeCategory>
-    >(API_ENDPOINTS.COMMITTEE_CATEGORIES.CREATE, data);
+    >(API_ENDPOINTS.COMMITTEE_CATEGORIES.CREATE, payload);
     return response.data.data;
   },
 

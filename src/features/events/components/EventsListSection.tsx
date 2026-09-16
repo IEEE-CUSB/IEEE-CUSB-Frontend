@@ -69,7 +69,7 @@ const transformEvent = (event: Event) => {
 
 export const EventsListSection = () => {
   const { isDark } = useTheme();
-  const [activeFilter, setActiveFilter] = useState<FilterType>('All');
+  const [activeCategoryId, setActiveCategoryId] = useState<string>('All');
   const [page, setPage] = useState(1);
   const limit = 12;
 
@@ -78,7 +78,7 @@ export const EventsListSection = () => {
   const { data, isLoading, isError, error, isFetching } = useEvents({
     page,
     limit,
-    category: activeFilter !== 'All' ? activeFilter : undefined,
+    category_id: activeCategoryId !== 'All' ? activeCategoryId : undefined,
   });
 
   // Safely extract events array - handle different response structures
@@ -101,13 +101,11 @@ export const EventsListSection = () => {
   // Loading skeleton
   if (isLoading) {
     return (
-      <section
-        className={`py-8 md:py-16 transition-colors duration-300 ${isDark ? 'bg-gray-900' : 'bg-background'}`}
-      >
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-24 relative overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <EventsFilterBar
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
+            activeFilter={activeCategoryId}
+            onFilterChange={setActiveCategoryId}
             darkMode={isDark}
             categories={categoriesData?.categories}
           />
@@ -179,8 +177,8 @@ export const EventsListSection = () => {
       <div className="max-w-7xl mx-auto px-6">
         {/* Filter, Search and Sort Bar */}
         <EventsFilterBar
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
+          activeFilter={activeCategoryId}
+          onFilterChange={setActiveCategoryId}
           darkMode={isDark}
           categories={categoriesData?.categories}
         />

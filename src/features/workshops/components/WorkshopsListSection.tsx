@@ -75,7 +75,7 @@ const transformWorkshop = (workshop: Workshop) => {
 
 export const WorkshopsListSection = () => {
   const { isDark } = useTheme();
-  const [activeFilter, setActiveFilter] = useState<FilterType>('All');
+  const [activeCategoryId, setActiveCategoryId] = useState<string>("All");
   const [page, setPage] = useState(1);
   const limit = 12;
   const [search, setSearch] = useState('');
@@ -87,7 +87,7 @@ export const WorkshopsListSection = () => {
     page,
     limit,
     search: debouncedSearch,
-    category: activeFilter !== 'All' ? activeFilter : undefined,
+    category_id: activeCategoryId !== 'All' ? activeFilter : undefined,
   });
 
   // Safely extract workshops array - handle different response structures
@@ -115,8 +115,8 @@ export const WorkshopsListSection = () => {
       >
         <div className="max-w-7xl mx-auto px-6">
           <WorkshopsFilterBar
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
+            activeFilter={activeCategoryId}
+            onFilterChange={setActiveCategoryId}
             search={search}
             onSearchChange={setSearch}
             darkMode={isDark}
@@ -190,8 +190,8 @@ export const WorkshopsListSection = () => {
       <div className="max-w-7xl mx-auto px-6">
         {/* Filter, Search and Sort Bar */}
         <WorkshopsFilterBar
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
+          activeFilter={activeCategoryId}
+          onFilterChange={setActiveCategoryId}
           search={search}
           onSearchChange={setSearch}
           darkMode={isDark}

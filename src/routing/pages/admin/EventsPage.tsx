@@ -62,7 +62,7 @@ export const EventsPage = () => {
   
   /* API hooks */
   const { data: categoriesData } = useGetCategories({ type: CategoryType.EVENT, limit: 100 });
-  const { data, isLoading } = useEvents({ page, limit, search: debouncedSearch, category: filterValues.category });
+  const { data, isLoading } = useEvents({ page, limit, search: debouncedSearch, category_id: filterValues.category });
   const createEventMutation = useCreateEvent();
   const updateEventMutation = useUpdateEvent();
   const deleteEventMutation = useDeleteEvent();
@@ -374,7 +374,7 @@ export const EventsPage = () => {
             placeholder: 'All Categories',
             options: categoriesData?.categories.map(c => ({
               label: c.name,
-              value: c.name,
+              value: c.id,
             })) || [],
           },
         ]}
