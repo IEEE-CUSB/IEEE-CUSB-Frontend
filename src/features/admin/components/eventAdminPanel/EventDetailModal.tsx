@@ -106,10 +106,10 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
             {/* Badges on top of image */}
             <div className="absolute bottom-3 left-3 flex gap-2">
               <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getCategoryColor(event.category)}`}
+                className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getCategoryColor(typeof event.category === "string" ? event.category : (event.category?.name || ""))}`}
               >
                 <FiTag className="w-3 h-3 inline mr-1" />
-                {event.category}
+                {typeof event.category === "string" ? event.category : event.category?.name}
               </span>
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getStatusInfo(event).color}`}

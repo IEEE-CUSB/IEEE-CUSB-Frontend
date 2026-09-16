@@ -161,7 +161,7 @@ export const useViewApplicationCV = () => {
   });
 };
 
-export const useGetVacancies = (params?: PaginationParams) => {
+export const useGetVacancies = (params?: api.GetVacanciesParams) => {
   return useQuery({
     queryKey: [...QUERY_KEYS.RECRUITMENT.VACANCIES, params],
     queryFn: () => api.getVacancies(params),
@@ -210,6 +210,35 @@ export const useRevokeApplication = () => {
         error.response?.data?.message ||
           'Failed to revoke application. Please try again.'
       );
+    },
+  });
+};
+
+export const useUploadVacancyImage = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) =>
+      api.uploadVacancyImage(id, file),
+    onSuccess: () => {
+      toast.success('Image uploaded successfully!');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RECRUITMENT.ADMIN_VACANCIES });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || 'Failed to upload image');
+    },
+  });
+};
+
+export const useDeleteVacancyImage = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.deleteVacancyImage(id),
+    onSuccess: () => {
+      toast.success('Image removed successfully!');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RECRUITMENT.ADMIN_VACANCIES });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || 'Failed to remove image');
     },
   });
 };

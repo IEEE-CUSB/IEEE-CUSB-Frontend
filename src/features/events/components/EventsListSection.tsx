@@ -57,8 +57,8 @@ const transformEvent = (event: Event) => {
     is_full: event.is_full ?? false,
     registrationDeadline: event.registration_deadline,
     // Use real category from API
-    category: event.category || 'Technical',
-    categoryBadge: (event.category || 'Technical').toUpperCase(),
+    category: event.category?.name || 'Technical',
+    categoryBadge: (event.category?.name || 'Technical').toUpperCase(),
     image: event.image_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
     is_registered: event.is_registered,
     registration_id: event.registration_id,

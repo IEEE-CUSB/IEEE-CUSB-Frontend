@@ -1,6 +1,6 @@
 import { User } from './auth.types';
 
-export type WorkshopCategory = 'Technical' | 'Non-Technical' | 'Social';
+
 
 export interface WorkshopContent {
   sectionTitle: string;
@@ -21,7 +21,12 @@ export interface Workshop {
   id: string;
   title: string;
   description: string;
-  category: WorkshopCategory;
+  category_id?: string | null;
+  category?: {
+    id: string;
+    name: string;
+    type: string;
+  } | null;
   instructor?: string;
   instructors?: Instructor[];
   instructor_ids?: string[];
@@ -88,7 +93,7 @@ export interface WorkshopRegistration {
 export interface CreateWorkshopRequest {
   title: string;
   description: string;
-  category: WorkshopCategory;
+  category_id: string;
   content: WorkshopContent[];
   location: string;
   start_time: string;
@@ -120,7 +125,7 @@ export interface UpdateInstructorRequest {
 export interface UpdateWorkshopRequest {
   title?: string;
   description?: string;
-  category?: WorkshopCategory;
+  category_id?: string;
   content?: WorkshopContent[];
   location?: string;
   start_time?: string;

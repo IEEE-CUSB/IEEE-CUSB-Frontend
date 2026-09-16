@@ -16,7 +16,7 @@ export type AdminEvent = {
   sponsors?: string[];
   date: string;
   location: string;
-  category: string;
+  category_id: string;
   capacity: number;
   registeredCount: number;
   attendeeCount: number;
@@ -44,7 +44,7 @@ export const convertApiEventToAdminEvent = (event: ApiEvent): AdminEvent => {
     eventType: 'Workshop', // Default value
     media: [],
     sponsors: [],
-    category: event.category || 'Technical',
+    category_id: event.category_id || '',
     registeredCount: 0, // This would come from registrations count
     attendeeCount: 0, // This would come from attended registrations count
     endTime: new Date(event.end_time).toISOString().slice(0, 16),
@@ -72,7 +72,7 @@ export const convertFormDataToCreateRequest = (
   return {
     title: formData.title,
     description: formData.description,
-    category: formData.category as 'Technical' | 'Non-Technical' | 'Social',
+    category_id: formData.category_id,
     location: formData.location,
     start_time: formData.start_time,
     end_time: formData.end_time,
@@ -91,7 +91,7 @@ export const convertFormDataToUpdateRequest = (
   return {
     title: formData.title,
     description: formData.description,
-    category: formData.category as 'Technical' | 'Non-Technical' | 'Social',
+    category_id: formData.category_id,
     location: formData.location,
     start_time: formData.start_time,
     end_time: formData.end_time,

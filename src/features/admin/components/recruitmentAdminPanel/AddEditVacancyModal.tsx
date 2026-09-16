@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
-import { InputField, Button, TextArea, Modal } from '@ieee-ui/ui';
+import React, { useState, useRef, useEffect } from 'react';
+import { InputField, Button, TextArea, Modal, Select } from '@ieee-ui/ui';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { FiUpload, FiTrash2, FiImage, FiX } from 'react-icons/fi';
+import { toast } from 'react-hot-toast';
 import {
   AddVacancy,
   UpdateVacancy,
   Vacancy,
 } from '@/shared/types/recruitment.types';
+import { CategoryType } from '@/shared/types/category.types';
+import { useUploadVacancyImage, useDeleteVacancyImage } from '@/shared/queries/recruitment';
+import { useGetCategories } from '@/shared/queries/categories/categories.queries';
 
 interface ExtendedAddEditVacancyModalProps {
   vacancy?: Vacancy;
@@ -22,6 +27,7 @@ interface FormValues {
   created_at: string;
   updated_at: string;
   is_open: boolean;
+  category_id: string;
 }
 
 const empty = (): FormValues => ({
@@ -30,6 +36,7 @@ const empty = (): FormValues => ({
   created_at: '',
   updated_at: '',
   is_open: true,
+  category_id: '',
 });
 
 const formatDateForInput = (dateString?: string) => {
@@ -44,11 +51,11 @@ const toForm = (v?: Vacancy): FormValues =>
   v
     ? {
         title: v.title,
-        description: v.description,
+        description: v.description ?? '',
         created_at: formatDateForInput(v.created_at),
         updated_at: formatDateForInput(v.updated_at),
-        //updated_at: formatDateForInput(Date.now().toString()),
         is_open: v.is_open,
+        category_id: v.category_id ?? v.category?.id ?? '',
       }
     : empty();
 
@@ -74,26 +81,37 @@ const validate = (v: FormValues): Errs => {
   return e;
 };
 
-export const AddEditVacancyModal: React.FC<
-  ExtendedAddEditVacancyModalProps
-> = ({ vacancy, apiVacancy, isOpen, onClose, onSave, isPending = false }) => {
+export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = ({
+  vacancy,
+  apiVacancy,
+  isOpen,
+  onClose,
+  onSave,
+  isPending = false,
+}) => {
   const { isDark } = useTheme();
   const isEditMode = !!vacancy;
   const vacancyId = apiVacancy?.id || vacancy?.id;
   const options = ['Open', 'Closed'];
   const statusColors: Record<string, string> = {
-    ['Open']: isDark
-      ? 'bg-green-900/30 text-green-300'
-      : 'bg-green-50 text-green-700',
-    ['Closed']: isDark
-      ? 'bg-red-900/30 text-red-300'
-      : 'bg-red-50 text-red-700',
+    ['Open']: isDark ? 'bg-green-900/30 text-green-300' : 'bg-green-50 text-green-700',
+    ['Closed']: isDark ? 'bg-red-900/30 text-red-300' : 'bg-red-50 text-red-700',
   };
+
+  // Image upload state
+  const primaryFileRef = useRef<HTMLInputElement>(null);
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [deleteImage, setDeleteImage] = useState(false);
+
+  const uploadImageMutation = useUploadVacancyImage();
+  const deleteImageMutation = useDeleteVacancyImage();
+  const { data: categoriesPayload } = useGetCategories({ type: CategoryType.RECRUITMENT, limit: 100 });
+  const categories = categoriesPayload?.categories || [];
+
   // Form state
   const [formKey, setFormKey] = useState(0);
-  const [formValues, setFormValues] = useState<FormValues>(() =>
-    toForm(vacancy)
-  );
+  const [formValues, setFormValues] = useState<FormValues>(() => toForm(vacancy));
   const [errors, setErrors] = useState<Errs>({});
   const [isSaving, setIsSaving] = useState(false);
 
@@ -106,9 +124,45 @@ export const AddEditVacancyModal: React.FC<
     setFormValues(toForm(vacancy));
     setErrors({});
     setIsSaving(false);
+    setPendingImage(null);
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImagePreview(null);
+    setDeleteImage(false);
   }, [formKey]);
 
-  /* ── Form handlers ─────────────────────────────── */
+  useEffect(() => {
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, []);
+
+  /* Image handlers */
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File is too large. Maximum size is 5MB.');
+      return;
+    }
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setPendingImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setDeleteImage(false);
+    if (primaryFileRef.current) primaryFileRef.current.value = '';
+  };
+
+  const handleClearImage = () => {
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setPendingImage(null);
+    setImagePreview(null);
+  };
+
+  const handleMarkDeleteImage = () => {
+    handleClearImage();
+    setDeleteImage(true);
+  };
+
+  /* Form handlers */
   const handleInputChange =
     (field: 'title') =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -128,12 +182,13 @@ export const AddEditVacancyModal: React.FC<
     if (errors.is_open) setErrors(prev => ({ ...prev, is_open: undefined }));
   };
 
-  /* ── Save ──────────────────────────────────────── */
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormValues(prev => ({ ...prev, category_id: e.target.value }));
+  };
+
+  /* Save */
   const handleSave = async (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+    if (e) { e.preventDefault(); e.stopPropagation(); }
 
     const validationErrors = validate(formValues);
     if (Object.keys(validationErrors).length > 0) {
@@ -147,14 +202,26 @@ export const AddEditVacancyModal: React.FC<
       title: formValues.title.trim(),
       description: formValues.description.trim(),
       is_open: formValues.is_open,
+      category_id: formValues.category_id || null,
     };
 
     try {
       await onSave(payload, vacancyId);
+
+      // After save, handle image upload/delete if editing an existing vacancy
+      if (vacancyId) {
+        const promises = [];
+        if (pendingImage) promises.push(uploadImageMutation.mutateAsync({ id: vacancyId, file: pendingImage }));
+        if (deleteImage) promises.push(deleteImageMutation.mutateAsync(vacancyId));
+        await Promise.all(promises);
+      }
     } catch {
       setIsSaving(false);
     }
   };
+
+  const currentImageUrl = imagePreview || (deleteImage ? null : (apiVacancy?.image_url || vacancy?.image_url));
+
   return (
     <Modal
       title={isEditMode ? 'Edit Vacancy' : 'Add New Vacancy'}
@@ -164,7 +231,7 @@ export const AddEditVacancyModal: React.FC<
       darkMode={isDark}
     >
       <div className="space-y-6">
-        {/* ── Form fields ─── */}
+        {/* Form fields */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="md:col-span-2">
             <InputField
@@ -179,7 +246,7 @@ export const AddEditVacancyModal: React.FC<
           </div>
           <div className="md:col-span-2">
             <TextArea
-              label="Description (Short)"
+              label="Description"
               value={formValues.description}
               placeholder="e.g. Develop and maintain backend services..."
               onChange={handleTextAreaChange('description')}
@@ -189,38 +256,111 @@ export const AddEditVacancyModal: React.FC<
             />
           </div>
         </div>
-        <div className="md:col-span-2">
-          <div className="flex items-center gap-3">
-            <label
-              id="choose-one-label"
-              className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} whitespace-nowrap`}
-            >
-              Vacancy Status:
+
+        {/* Category + Status row */}
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex-1 min-w-[200px]">
+            <Select
+              id="category"
+              label="Category"
+              options={[
+                { label: 'Select a category...', value: '' },
+                ...categories.map(c => ({ label: c.name, value: c.id })),
+              ]}
+              value={formValues.category_id}
+              onChange={handleCategoryChange}
+              darkMode={isDark}
+            />
+          </div>
+          <div>
+            <label className={`block text-sm font-medium mb-1.5 ${ isDark ? 'text-gray-300' : 'text-gray-700' }`}>
+              Status
             </label>
-            <div
-              role="group"
-              aria-labelledby="choose-one-label"
-              className="flex gap-2"
-            >
+            <div className="flex gap-2">
               {options.map(option => (
                 <Button
                   buttonText={option}
                   key={option}
-                  onClick={() => handleStatusChange(option as string)}
-                  className={`text-xs px-2 py-1, ${statusColors[option]}`}
+                  onClick={() => handleStatusChange(option)}
+                  className={`text-xs px-3 py-1.5 ${
+                    (option === 'Open' && formValues.is_open) || (option === 'Closed' && !formValues.is_open)
+                      ? statusColors[option]
+                      : isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'
+                  }`}
                   width="fit"
                   darkMode={isDark}
                   type="primary"
-                >
-                  {option}
-                </Button>
+                />
               ))}
             </div>
           </div>
         </div>
 
-        {/* ── Actions ─── */}
-        <div className="flex items-center justify-end gap-3 pt-4">
+        {/* Image Upload Section */}
+        <div>
+          <label className={`block text-sm font-medium mb-2 ${ isDark ? 'text-gray-300' : 'text-gray-700' }`}>
+            Position Image
+          </label>
+
+          {currentImageUrl ? (
+            <div className="relative w-full h-44 rounded-xl overflow-hidden group">
+              <img src={currentImageUrl} alt="Preview" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                <button
+                  onClick={() => primaryFileRef.current?.click()}
+                  className="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
+                  title="Replace image"
+                >
+                  <FiUpload className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={apiVacancy?.image_public_id && !pendingImage ? handleMarkDeleteImage : handleClearImage}
+                  className="p-2 rounded-lg bg-red-500/70 hover:bg-red-500 text-white transition-colors"
+                  title="Remove image"
+                >
+                  <FiTrash2 className="w-5 h-5" />
+                </button>
+              </div>
+              {pendingImage && (
+                <div className="absolute top-2 right-2">
+                  <button onClick={handleClearImage} className="p-1 rounded-full bg-black/50 text-white hover:bg-black/70">
+                    <FiX className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => primaryFileRef.current?.click()}
+              className={`w-full h-36 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-colors ${
+                isDark
+                  ? 'border-gray-600 hover:border-primary/60 text-gray-500 hover:text-gray-400'
+                  : 'border-gray-300 hover:border-primary/60 text-gray-400 hover:text-gray-500'
+              }`}
+            >
+              <FiImage className="w-8 h-8" />
+              <span className="text-sm font-medium">Click to upload image</span>
+              <span className="text-xs opacity-70">PNG, JPG up to 5MB</span>
+            </button>
+          )}
+
+          <input
+            ref={primaryFileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageSelect}
+          />
+
+          {pendingImage && !vacancyId && (
+            <p className={`mt-1.5 text-xs ${ isDark ? 'text-yellow-400' : 'text-yellow-600' }`}>
+              ⚠ Image will be uploaded after saving the vacancy. Re-edit to add the image.
+            </p>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className={`flex items-center justify-end gap-3 pt-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
           <Button
             buttonText="Cancel"
             onClick={onClose}
@@ -243,4 +383,5 @@ export const AddEditVacancyModal: React.FC<
     </Modal>
   );
 };
+
 export default AddEditVacancyModal;

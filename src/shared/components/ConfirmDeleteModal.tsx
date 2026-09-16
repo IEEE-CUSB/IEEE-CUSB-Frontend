@@ -7,6 +7,7 @@ interface ConfirmDeleteModalProps {
   title?: string;
   itemName: string;
   entityLabel?: string;
+  warningMessage?: string;
   isDark: boolean;
   isPending: boolean;
   onConfirm: () => void;
@@ -18,6 +19,7 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   title,
   itemName,
   entityLabel = 'item',
+  warningMessage,
   isDark,
   isPending,
   onConfirm,
@@ -44,9 +46,15 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
       </div>
 
       <div className="text-center space-y-2">
-        <p className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          Are you sure you want to delete this {entityLabel}?
-        </p>
+        {warningMessage ? (
+          <p className={`font-semibold ${isDark ? 'text-red-400' : 'text-red-600'}`}>
+            {warningMessage}
+          </p>
+        ) : (
+          <p className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            Are you sure you want to delete this {entityLabel}?
+          </p>
+        )}
         <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
           You are about to delete{' '}
           <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>

@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useTheme } from '@/shared/hooks/useTheme';
 import InstructorsTab from './InstructorsTab';
 import WorkshopsTab from './WorkshopsTab';
+import { CategoriesTab } from '../categoryAdminPanel/CategoriesTab';
+import { CategoryType } from '@/shared/types/category.types';
 
 const WorkshopAdminView: React.FC = () => {
   const { isDark } = useTheme();
@@ -11,6 +13,7 @@ const WorkshopAdminView: React.FC = () => {
   const tabs = [
     { id: 'workshops', label: 'Workshops' },
     { id: 'instructors', label: 'Instructors' },
+    { id: 'categories', label: 'Categories' },
   ];
 
   return (
@@ -33,6 +36,7 @@ const WorkshopAdminView: React.FC = () => {
       <div className="flex-1 p-4 overflow-y-auto">
         {activeTab === 'workshops' && <WorkshopsTab />}
         {activeTab === 'instructors' && <InstructorsTab />}
+        {activeTab === 'categories' && <CategoriesTab type={CategoryType.WORKSHOP} />}
       </div>
     </div>
   );

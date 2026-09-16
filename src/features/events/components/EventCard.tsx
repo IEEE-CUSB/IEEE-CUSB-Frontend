@@ -12,7 +12,7 @@ interface EventCardProps {
   event: {
     id: string | number;
     title: string;
-    category: string;
+    category?: string | { id: string; name: string; type: string } | null;
     categoryBadge: string;
     status: string;
     statusBadge: string;
@@ -133,7 +133,7 @@ export const EventCard = ({ event, index, darkMode }: EventCardProps) => {
         {/* Badges */}
         <div className="absolute top-3 left-3 flex gap-2 z-10">
           <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getCategoryColor(event.category)} transition-all duration-200`}
+            className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getCategoryColor(typeof event.category === "string" ? event.category : (event.category?.name || ""))} transition-all duration-200`}
           >
             {event.categoryBadge}
           </span>

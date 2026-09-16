@@ -126,8 +126,12 @@ export const viewApplicationCV = async (
   return response.data;
 };
 
+export interface GetVacanciesParams extends PaginationParams {
+  category_id?: string;
+}
+
 export const getVacancies = async (
-  params?: PaginationParams
+  params?: GetVacanciesParams
 ): Promise<Vacancy[]> => {
   const filteredParams = params
     ? Object.fromEntries(
@@ -174,4 +178,25 @@ export const adminViewApplicationCv = async (
   const url = URL.createObjectURL(blob);
   window.open(url, '_blank');
   setTimeout(() => URL.revokeObjectURL(url), 30_000);
+};
+
+export const uploadVacancyImage = async (
+  vacancyId: string,
+  file: File,
+): Promise<Vacancy> => {
+  const formData = new FormData();
+  formData.append('image', file);
+  const response = await apiClient.post<ApiResponse<Vacancy>>(
+    API_ENDPOINTS.RECRUITMENT.UPLOAD_VACANCY_IMAGE(vacancyId),
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } },
+  );
+  return response.data.data;
+};
+
+export const deleteVacancyImage = async (vacancyId: string): Promise<Vacancy> => {
+  const response = await apiClient.delete<ApiResponse<Vacancy>>(
+    API_ENDPOINTS.RECRUITMENT.DELETE_VACANCY_IMAGE(vacancyId),
+  );
+  return response.data.data;
 };

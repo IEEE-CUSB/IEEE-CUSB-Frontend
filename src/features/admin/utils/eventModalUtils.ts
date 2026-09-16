@@ -127,7 +127,7 @@ export const validateField = (
       break;
     }
 
-    case 'category': {
+    case 'category_id': {
       if (!stringValue.trim())
         return ERROR_MESSAGES.required.category || 'Category is required';
       break;
@@ -169,52 +169,38 @@ export const convertEventToFormValues = (
       registrationDeadline: '',
       location: '',
       capacity: '',
-      category: 'Technical',
+      category_id: '',
     };
   }
 
-  // Convert date from AdminEvent format (ISO string) to datetime-local format
-  const startDate = new Date(event.date);
-  const formattedStartTime = startDate.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm
-
-  // Use actual end time from event if available, otherwise default to 2 hours after start
-  const formattedEndTime =
-    event.endTime ||
-    new Date(startDate.getTime() + 2 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 16);
-
-  // Default registration deadline 1 day before start
-  const deadlineDate = new Date(startDate.getTime() - 24 * 60 * 60 * 1000);
-  const formattedDeadline = deadlineDate.toISOString().slice(0, 16);
-
   return {
-    title: event.title,
-    description: event.description,
-    startTime: formattedStartTime,
-    endTime: formattedEndTime,
-    registrationDeadline: formattedDeadline,
-    location: event.location,
-    capacity: event.capacity.toString(),
-    category: event.category as 'Technical' | 'Non-Technical' | 'Social',
+    title: event.title || '',
+    description: event.description || '',
+    startTime: event.date ? new Date(event.date).toISOString().slice(0, 16) : '',
+    endTime: event.endTime ? new Date(event.endTime).toISOString().slice(0, 16) : '',
+    registrationDeadline: event.date ? new Date(event.date).toISOString().slice(0, 16) : '',
+    location: event.location || '',
+    capacity: String(event.capacity || 0),
+    category_id: event.category_id || '',
   };
 };
 
+/**
+ * Convert FormValues to EventFormData (for create/update)
+ */
 export const convertFormValuesToEventFormData = (
   formValues: EventFormValues,
   existingEvent?: AdminEvent
 ): EventFormData => {
   return {
     id: existingEvent?.id,
-    title: formValues.title.trim(),
-    description: formValues.description.trim(),
-    location: formValues.location.trim(),
-    start_time: new Date(formValues.startTime).toISOString(),
-    end_time: new Date(formValues.endTime).toISOString(),
+    title: formValues.title,
+    description: formValues.description,
+    location: formValues.location,
+    start_time: formValues.startTime,
+    end_time: formValues.endTime,
     capacity: parseInt(formValues.capacity, 10),
-    registration_deadline: new Date(
-      formValues.registrationDeadline
-    ).toISOString(),
-    category: formValues.category,
+    registration_deadline: formValues.registrationDeadline,
+    category_id: formValues.category_id,
   };
 };

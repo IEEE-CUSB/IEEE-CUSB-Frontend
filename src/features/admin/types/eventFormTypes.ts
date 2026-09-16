@@ -9,7 +9,7 @@ export interface EventFormData {
   end_time: string;
   capacity: number;
   registration_deadline: string;
-  category: string;
+  category_id: string;
 }
 
 export interface CreateEventPayload {
@@ -20,7 +20,7 @@ export interface CreateEventPayload {
   end_time: string;
   capacity: number;
   registration_deadline: string;
-  category: string;
+  category_id: string;
 }
 
 export interface UpdateEventPayload {
@@ -32,7 +32,7 @@ export interface UpdateEventPayload {
   end_time: string;
   capacity: number;
   registration_deadline: string;
-  category: string;
+  category_id: string;
 }
 
 export const convertEventToFormData = (event: AdminEvent): EventFormData => {
@@ -41,11 +41,11 @@ export const convertEventToFormData = (event: AdminEvent): EventFormData => {
     title: event.title,
     description: event.description,
     location: event.location,
-    start_time: event.date, // AdminEvent uses 'date' but we map to 'start_time'
-    end_time: event.date, // Default same as start, will be updated
+    start_time: event.date,
+    end_time: event.date,
     capacity: event.capacity,
-    registration_deadline: event.date, // Default same as start, will be updated
-    category: event.category,
+    registration_deadline: event.date,
+    category_id: event.category_id || '',
   };
 };
 
@@ -60,7 +60,7 @@ export const convertFormDataToCreatePayload = (
     end_time: formData.end_time,
     capacity: formData.capacity,
     registration_deadline: formData.registration_deadline,
-    category: formData.category,
+    category_id: formData.category_id,
   };
 };
 
@@ -80,6 +80,6 @@ export const convertFormDataToUpdatePayload = (
     end_time: formData.end_time,
     capacity: formData.capacity,
     registration_deadline: formData.registration_deadline,
-    category: formData.category,
+    category_id: formData.category_id,
   };
 };

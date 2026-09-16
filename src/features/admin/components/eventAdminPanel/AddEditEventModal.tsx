@@ -26,6 +26,7 @@ import {
   useUploadEventGallery,
   useDeleteEventGalleryImage,
 } from '@/shared/queries/events';
+import { useGetCategories } from '@/shared/queries/categories/categories.queries';
 import { toast } from 'react-hot-toast';
 import type { Event } from '@/shared/types/events.types';
 import { FiUpload, FiTrash2, FiImage, FiX } from 'react-icons/fi';
@@ -74,6 +75,17 @@ const AddEditEventModal: React.FC<ExtendedAddEditEventModalProps> = ({
   const deleteGalleryImage = useDeleteEventGalleryImage();
   // Gallery already embedded in apiEvent.images — no extra API call needed
   const existingGallery = apiEvent?.images ?? [];
+
+  // Fetch event categories
+  const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategories({
+    type: 'EVENT',
+    limit: 100, // Fetch enough to cover all categories
+  });
+  
+  const categoryOptions = categoriesData?.categories.map(c => ({
+    value: c.id,
+    label: c.name,
+  })) || [];
 
   // Reset when modal opens / event changes
   React.useEffect(() => {
@@ -245,7 +257,7 @@ const AddEditEventModal: React.FC<ExtendedAddEditEventModalProps> = ({
             <InputField label="Location" value={formValues.location} placeholder="Enter event location" onChange={handleInputChange('location')} id="location" error={errors.location} darkMode={isDark} />
           </div>
           <div className="md:col-span-2">
-            <Select id="category" label="Category" value={formValues.category} onChange={handleInputChange('category')} options={[{ value: 'Technical', label: 'Technical' }, { value: 'Non-Technical', label: 'Non-Technical' }, { value: 'Social', label: 'Social' }]} error={errors.category} darkMode={isDark} />
+            <Select id="category_id" label="Category" value={formValues.category_id} onChange={handleInputChange('category_id')} options={categoryOptions} error={errors.category_id} disabled={isLoadingCategories} darkMode={isDark} />
           </div>
           <NumberField id="capacity" label="Capacity" value={formValues.capacity} onChange={handleInputChange('capacity')} placeholder="Enter event capacity" min={EVENT_FORM_CONSTRAINTS.capacity.min.toString()} max={EVENT_FORM_CONSTRAINTS.capacity.max.toString()} error={errors.capacity} darkMode={isDark} />
         </div>

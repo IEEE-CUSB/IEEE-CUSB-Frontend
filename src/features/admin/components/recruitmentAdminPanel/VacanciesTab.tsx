@@ -98,7 +98,33 @@ const VacanciesTab = () => {
       {
         header: 'Vacancy Title',
         accessorKey: 'title',
-        className: `font-medium max-w-[200px] truncate ${isDark ? 'text-white' : 'text-gray-900'}`,
+        cell: item => (
+          <div className="flex items-center gap-3">
+            {item.image_url ? (
+              <img
+                src={item.image_url}
+                alt={item.title}
+                className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isDark ? 'bg-primary/20' : 'bg-primary/10'}`}>
+                <CgWorkAlt className={`w-4 h-4 ${isDark ? 'text-primary-light' : 'text-primary'}`} />
+              </div>
+            )}
+            <span className={`font-medium max-w-[180px] truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              {item.title}
+            </span>
+          </div>
+        ),
+      },
+      {
+        header: 'Category',
+        accessorKey: 'category',
+        cell: item => (
+          <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            {typeof item.category === "string" ? item.category : (item.category?.name ?? "—")}
+          </span>
+        ),
       },
       {
         header: 'Created at',
@@ -256,15 +282,23 @@ const VacanciesTab = () => {
                 }
               )}`}
               badge={badgeText}
-              description={vacancy.description}
+              description={vacancy.description ?? undefined}
               avatar={
-                <div
-                  className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-primary/20' : 'bg-primary/10'}`}
-                >
-                  <CgWorkAlt
-                    className={`w-5 h-5 ${isDark ? 'text-primary-light' : 'text-primary'}`}
+                vacancy.image_url ? (
+                  <img
+                    src={vacancy.image_url}
+                    alt={vacancy.title}
+                    className="flex-shrink-0 w-10 h-10 rounded-xl object-cover"
                   />
-                </div>
+                ) : (
+                  <div
+                    className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-primary/20' : 'bg-primary/10'}`}
+                  >
+                    <CgWorkAlt
+                      className={`w-5 h-5 ${isDark ? 'text-primary-light' : 'text-primary'}`}
+                    />
+                  </div>
+                )
               }
               onEdit={() => handleEdit(vacancy)}
               onDelete={() => handleDeleteClick(vacancy)}

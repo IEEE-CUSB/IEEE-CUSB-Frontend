@@ -24,7 +24,7 @@ export interface EventFormValues {
   registrationDeadline: string;
   location: string;
   capacity: string;
-  category: 'Technical' | 'Non-Technical' | 'Social';
+  category_id: string;
 }
 
 export interface FormErrors {
@@ -35,5 +35,5 @@ export interface FormErrors {
   registrationDeadline?: string;
   location?: string;
   capacity?: string;
-  category?: string;
+  category_id?: string;
 }

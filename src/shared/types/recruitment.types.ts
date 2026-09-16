@@ -1,5 +1,7 @@
 import { User } from './auth.types';
 
+import { Category } from './category.types';
+
 export interface ApiResponse<T> {
   data: T;
   message?: string;
@@ -21,8 +23,12 @@ export enum ApplicationStatus {
 export interface Vacancy {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
+  image_url: string | null;
+  image_public_id: string | null;
   is_open: boolean;
+  category_id?: string | null;
+  category?: Category | null;
   created_at: string;
   updated_at: string;
 }
@@ -52,12 +58,14 @@ export interface AddVacancy {
   title: string;
   description: string;
   is_open: boolean;
+  category_id?: string | null;
 }
 
 export interface UpdateVacancy {
   title?: string;
   description?: string;
   is_open?: boolean;
+  category_id?: string | null;
 }
 
 export interface UpdateStatus {

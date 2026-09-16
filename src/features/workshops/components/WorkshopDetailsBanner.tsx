@@ -5,7 +5,7 @@ interface WorkshopDetailsBannerProps {
   title: string;
   description: string;
   image: string;
-  category: string;
+  category?: string | { id: string; name: string; type: string } | null;
   categoryBadge: string;
   darkMode?: boolean;
 }
@@ -70,7 +70,7 @@ export const WorkshopDetailsBanner = ({
             className="mb-4"
           >
             <span
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-md ${getCategoryColor(category)}`}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-md ${getCategoryColor(typeof category === "string" ? category : (category?.name || ""))}`}
             >
               <HiTag className="w-4 h-4" />
               {categoryBadge}

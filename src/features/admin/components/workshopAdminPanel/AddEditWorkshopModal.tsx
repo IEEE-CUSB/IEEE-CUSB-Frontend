@@ -19,11 +19,11 @@ import {
   useUploadWorkshopGallery,
   useDeleteWorkshopGalleryImage,
 } from '@/shared/queries/workshops';
+import { useGetCategories } from '@/shared/queries/categories/categories.queries';
 import type {
   Workshop,
   CreateWorkshopRequest,
   UpdateWorkshopRequest,
-  WorkshopCategory,
   WorkshopContent,
 } from '@/shared/types/workshops.types';
 
@@ -40,7 +40,7 @@ interface FormValues {
   title: string;
   description: string;
   content: WorkshopContent[];
-  category: WorkshopCategory;
+  category_id: string;
   location: string;
   start_time: string;
   end_time: string;
@@ -53,7 +53,7 @@ const empty = (): FormValues => ({
   title: '',
   description: '',
   content: [],
-  category: 'Technical',
+  category_id: '',
   location: '',
   start_time: '',
   end_time: '',
@@ -74,7 +74,7 @@ const toForm = (w?: Workshop): FormValues =>
         title: w.title,
         description: w.description,
         content: w.content && Array.isArray(w.content) ? w.content : [],
-        category: w.category || 'Technical',
+        category_id: w.category_id || '',
         location: w.location,
         start_time: formatDateForInput(w.start_time),
         end_time: formatDateForInput(w.end_time),
@@ -117,6 +117,10 @@ const validate = (v: FormValues): Errs => {
   if (v.content.some(sec => !sec.sectionTitle.trim())) {
     e.content = 'All sections must have a title.';
   }
+
+  if (!v.category_id) {
+    e.category_id = 'Category is required.';
+  }
   
   return e;
 };
@@ -157,6 +161,16 @@ export const AddEditWorkshopModal: React.FC<ExtendedAddEditWorkshopModalProps> =
     label: inst.name,
     value: inst.id,
   }));
+
+  // Categories data
+  const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategories({
+    type: 'WORKSHOP',
+    limit: 100,
+  });
+  const categoryOptions = categoriesData?.categories.map(c => ({
+    label: c.name,
+    value: c.id,
+  })) || [];
 
   // Image mutation hooks
   const uploadImage = useUploadWorkshopCover();
@@ -371,7 +385,7 @@ export const AddEditWorkshopModal: React.FC<ExtendedAddEditWorkshopModalProps> =
         sectionTitle: sec.sectionTitle.trim(),
         subSection: sec.subSection.map((sub: string) => sub.trim()).filter(Boolean),
       })).filter((sec) => sec.sectionTitle),
-      category: formValues.category,
+      category_id: formValues.category_id,
       location: formValues.location.trim(),
       start_time: new Date(formValues.start_time).toISOString(),
       end_time: new Date(formValues.end_time).toISOString(),
@@ -540,15 +554,13 @@ export const AddEditWorkshopModal: React.FC<ExtendedAddEditWorkshopModalProps> =
           </div>
           <div className="md:col-span-2">
             <Select
-              id="category"
+              id="category_id"
               label="Category"
-              value={formValues.category}
-              onChange={handleInputChange('category')}
-              options={[
-                { value: 'Technical', label: 'Technical' },
-                { value: 'Non-Technical', label: 'Non-Technical' },
-                { value: 'Social', label: 'Social' },
-              ]}
+              value={formValues.category_id}
+              onChange={handleInputChange('category_id')}
+              options={categoryOptions}
+              error={errors.category_id}
+              disabled={isLoadingCategories}
               darkMode={isDark}
             />
           </div>

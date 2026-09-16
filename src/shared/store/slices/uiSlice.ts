@@ -15,9 +15,17 @@ export interface UiState {
   notificationsEnabled: boolean;
 }
 
+const getInitialTheme = (): 'light' | 'dark' => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (stored) return stored;
+  }
+  return 'dark'; // Default to dark as requested
+};
+
 const initialState: UiState = {
   sidebarOpen: true,
-  theme: 'light',
+  theme: getInitialTheme(),
   notificationsEnabled: true,
 };
 

@@ -28,17 +28,12 @@ export const useTheme = () => {
   // Initialize theme from localStorage or system preference
   useEffect(() => {
     const stored = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    if (stored) {
+    if (stored && stored !== theme) {
       dispatch(setTheme(stored));
-    } else {
-      // Check system preference
-      // const prefersDark = window.matchMedia(
-      //   '(prefers-color-scheme: dark)'
-      // ).matches;
-      // dispatch(setTheme(prefersDark ? 'dark' : 'light'));
-      dispatch(setTheme('light')); // Default to light if no preference
+    } else if (!stored) {
+      dispatch(setTheme('dark')); // Default to dark if no preference
     }
-  }, [dispatch]);
+  }, [dispatch, theme]);
 
   const toggleTheme = () => {
     dispatch(toggleThemeAction());

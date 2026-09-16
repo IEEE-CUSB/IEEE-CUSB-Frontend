@@ -23,7 +23,9 @@ import {
   type AdminEvent,
 } from '@/features/admin/utils/eventConversion';
 import toast from 'react-hot-toast';
-import { useDebounce } from '@/shared/hooks/useDebounce';
+import { useDebounce } from "@/shared/hooks/useDebounce";
+import { CategoriesTab } from "@/features/admin/components/categoryAdminPanel/CategoriesTab";
+import { CategoryType } from "@/shared/types/category.types";
 
 // Helper function to format date
 const formatDate = (dateString: string): string => {
@@ -49,6 +51,7 @@ const getEventStatus = (event: Event): 'Upcoming' | 'Ongoing' | 'Completed' => {
 export const EventsPage = () => {
   const { isDark } = useTheme();
 
+  const [activeTab, setActiveTab] = useState<'events' | 'categories'>('events');
   const [page, setPage] = useState(1);
   const limit = 10;
   
@@ -205,15 +208,16 @@ export const EventsPage = () => {
               ? 'bg-orange-900/30 text-orange-300'
               : 'bg-orange-50 text-orange-700',
           };
+          const categoryName = item.category?.name || 'Other';
           const color =
-            categoryColors[item.category] ||
+            categoryColors[categoryName] ||
             (isDark ? 'bg-gray-800 text-gray-400' : 'bg-gray-50 text-gray-700');
           return (
             <div onClick={() => handleView(item)} className="cursor-pointer">
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color}`}
               >
-                {item.category}
+                {categoryName}
               </span>
             </div>
           );
@@ -312,8 +316,34 @@ export const EventsPage = () => {
   const isPending = createEventMutation.isPending || updateEventMutation.isPending;
 
   return (
-    <div className="space-y-6">
-      <DataTable
+    <div className={`flex h-full flex-col ${isDark ? 'text-white' : 'text-gray-900'}`}>
+      <div className="flex mb-4 px-2">
+        <button
+          onClick={() => setActiveTab('events')}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'events'
+              ? 'border-primary text-primary'
+              : 'border-transparent hover:text-primary hover:border-primary/50 text-gray-500 dark:text-gray-400'
+          }`}
+        >
+          Events
+        </button>
+        <button
+          onClick={() => setActiveTab('categories')}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'categories'
+              ? 'border-primary text-primary'
+              : 'border-transparent hover:text-primary hover:border-primary/50 text-gray-500 dark:text-gray-400'
+          }`}
+        >
+          Categories
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto space-y-6">
+        {activeTab === 'events' ? (
+          <>
+            <DataTable
         title="Event Management"
         subtitle="Create and manage upcoming events"
         headerIcon={<FiCalendar className="w-5 h-5 text-primary" />}
@@ -422,6 +452,11 @@ export const EventsPage = () => {
           eventTitle={selectedEventForRegistrations.title}
         />
       )}
+        </>
+        ) : (
+          <CategoriesTab type={CategoryType.EVENT} />
+        )}
+      </div>
     </div>
   );
 };

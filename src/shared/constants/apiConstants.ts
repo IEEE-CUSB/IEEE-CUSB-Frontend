@@ -106,6 +106,13 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/admin/categories/${id}`,
   },
 
+  CATEGORIES: {
+    CREATE: '/admin/categories',
+    GET_ALL: '/admin/categories',
+    UPDATE: (id: string) => `/admin/categories/${id}`,
+    DELETE: (id: string) => `/admin/categories/${id}`,
+  },
+
   // Board endpoints
   BOARD: {
     GET_ALL: '/board',
@@ -155,6 +162,8 @@ export const API_ENDPOINTS = {
     GET_ALL_VACANCIES: '/admin/recruitment/vacancies',
     UPDATE_VACANCY: (id: string) => `/admin/recruitment/vacancies/${id}`,
     DELETE_VACANCY: (id: string) => `/admin/recruitment/vacancies/${id}`,
+    UPLOAD_VACANCY_IMAGE: (id: string) => `/admin/recruitment/vacancies/${id}/image`,
+    DELETE_VACANCY_IMAGE: (id: string) => `/admin/recruitment/vacancies/${id}/image`,
 
     GET_ALL_APPLICATIONS: (id: string) =>
       `/admin/recruitment/vacancies/${id}/applications`,
@@ -212,6 +221,10 @@ export const QUERY_KEYS = {
   COMMITTEE_CATEGORIES: {
     ALL: ['categories'],
     ONE: (id: string) => ['categories', id],
+  },
+  CATEGORIES: {
+    ALL: ['admin_categories'],
+    ONE: (id: string) => ['admin_categories', id],
   },
   AWARDS: {
     ALL: ['awards'],

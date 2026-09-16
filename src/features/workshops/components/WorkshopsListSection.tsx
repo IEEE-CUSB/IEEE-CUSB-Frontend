@@ -61,8 +61,8 @@ const transformWorkshop = (workshop: Workshop) => {
     is_full: workshop.is_full ?? false,
     registrationDeadline: workshop.registration_deadline,
     // Use real category from API
-    category: workshop.category || 'Technical',
-    categoryBadge: (workshop.category || 'Technical').toUpperCase(),
+    category: workshop.category?.name || 'Technical',
+    categoryBadge: (workshop.category?.name || 'Technical').toUpperCase(),
     image:
       workshop.image_url ||
       'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
