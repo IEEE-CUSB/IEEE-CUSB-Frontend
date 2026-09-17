@@ -92,11 +92,7 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
   const { isDark } = useTheme();
   const isEditMode = !!vacancy;
   const vacancyId = apiVacancy?.id || vacancy?.id;
-  const options = ['Open', 'Closed'];
-  const statusColors: Record<string, string> = {
-    ['Open']: isDark ? 'bg-green-900/30 text-green-300' : 'bg-green-50 text-green-700',
-    ['Closed']: isDark ? 'bg-red-900/30 text-red-300' : 'bg-red-50 text-red-700',
-  };
+
 
   // Image upload state
   const primaryFileRef = useRef<HTMLInputElement>(null);
@@ -176,11 +172,6 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
       setFormValues(prev => ({ ...prev, [field]: e.target.value }));
       if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
     };
-
-  const handleStatusChange = (value: string) => {
-    setFormValues(prev => ({ ...prev, is_open: value === 'Open' }));
-    if (errors.is_open) setErrors(prev => ({ ...prev, is_open: undefined }));
-  };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormValues(prev => ({ ...prev, category_id: e.target.value }));
@@ -276,22 +267,49 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
             <label className={`block text-sm font-medium mb-1.5 ${ isDark ? 'text-gray-300' : 'text-gray-700' }`}>
               Status
             </label>
-            <div className="flex gap-2">
-              {options.map(option => (
-                <Button
-                  buttonText={option}
-                  key={option}
-                  onClick={() => handleStatusChange(option)}
-                  className={`text-xs px-3 py-1.5 ${
-                    (option === 'Open' && formValues.is_open) || (option === 'Closed' && !formValues.is_open)
-                      ? statusColors[option]
-                      : isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'
-                  }`}
-                  width="fit"
-                  darkMode={isDark}
-                  type="primary"
+            <div className="flex items-center gap-3">
+              {/* Toggle switch */}
+              <label
+                className="relative inline-block cursor-pointer"
+                style={{ fontSize: 17, width: '3.5em', height: '2em' }}
+              >
+                <input
+                  type="checkbox"
+                  checked={formValues.is_open}
+                  onChange={e => setFormValues(prev => ({ ...prev, is_open: e.target.checked }))}
+                  className="opacity-0 w-0 h-0 absolute"
                 />
-              ))}
+                {/* Track */}
+                <span
+                  className="absolute inset-0 rounded-full transition-all duration-300"
+                  style={{
+                    background: formValues.is_open ? '#22c55e' : (isDark ? '#4b5563' : '#d1d5db'),
+                    transition: 'background 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+                  }}
+                />
+                {/* Thumb */}
+                <span
+                  className="absolute rounded-full bg-white shadow-lg"
+                  style={{
+                    height: formValues.is_open ? '2em' : '1.4em',
+                    width: formValues.is_open ? '2em' : '1.4em',
+                    left: formValues.is_open ? 'calc(100% - 2em)' : '0.3em',
+                    bottom: formValues.is_open ? 0 : '0.3em',
+                    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    boxShadow: '0 0 20px rgba(0,0,0,0.4)',
+                  }}
+                />
+              </label>
+              {/* Label */}
+              <span
+                className={`text-sm font-semibold ${
+                  formValues.is_open
+                    ? (isDark ? 'text-green-400' : 'text-green-600')
+                    : (isDark ? 'text-gray-400' : 'text-gray-500')
+                }`}
+              >
+                {formValues.is_open ? 'Open' : 'Closed'}
+              </span>
             </div>
           </div>
         </div>
