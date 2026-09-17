@@ -78,12 +78,12 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
 
     setIsSubmitting(true);
     try {
-      const extra_data: Record<string, any> = { ...answers };
+      const extra_data: Record<string, any> = {}; for (const [qId, answer] of Object.entries(answers)) { const qText = questions.find(q => q.id === qId)?.question_text || qId; extra_data[qText] = answer; }
       
       // Upload files
       for (const [qId, file] of Object.entries(files)) {
         const { url } = await uploadApplicationFile(file);
-        extra_data[qId] = url;
+        const qText = questions.find(q => q.id === qId)?.question_text || qId; extra_data[qText] = url;
       }
 
       await applyMutation.mutateAsync({

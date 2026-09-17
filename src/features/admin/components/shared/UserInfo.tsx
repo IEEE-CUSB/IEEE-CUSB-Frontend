@@ -176,25 +176,26 @@ export default function UserInfo({
                     </div>
                   </div>
 
-                  {extraDetails && (
+                  {extraDetails && Object.keys(extraDetails).length > 0 && (
                     <div className="rounded-2xl border border-border bg-background/70 p-5">
                       <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
                         <FiFileText className="h-5 w-5 text-primary" />
-                        Application details
+                        Form Responses
                       </div>
-                      <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                        {extraDetails.why_join || 'No answer provided.'}
-                      </p>
-                      {extraDetails.portfolio && (
-                        <a
-                          href={extraDetails.portfolio}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-3 block break-all text-sm font-medium text-primary hover:underline"
-                        >
-                          {extraDetails.portfolio}
-                        </a>
-                      )}
+                      <div className="mt-4 space-y-4">
+                        {Object.entries(extraDetails).map(([question, answer]) => (
+                          <div key={question}>
+                            <p className="text-sm font-semibold text-foreground">{question}</p>
+                            {typeof answer === 'string' && answer.startsWith('http') ? (
+                              <a href={answer} target="_blank" rel="noopener noreferrer" className="block break-all text-sm mt-1 text-primary hover:underline">
+                                {answer}
+                              </a>
+                            ) : (
+                              <p className="mt-1 text-sm leading-6 text-muted-foreground">{String(answer)}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

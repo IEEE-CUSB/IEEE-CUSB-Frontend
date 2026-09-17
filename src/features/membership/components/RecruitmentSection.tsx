@@ -289,11 +289,17 @@ export const RecruitmentSection = () => {
                                 {getStatusIcon(app.status)} {app.status}
                               </span>
                             </div>
-                            <p className={`text-xs mb-2 line-clamp-2 ${
-                              isDark ? 'text-gray-400' : 'text-gray-600'
-                            }`}>
-                              <span className="font-medium">Why join:</span> {app.extra_data?.why_join}
-                            </p>
+                            {(() => {
+                              const firstAnswerKey = Object.keys(app.extra_data || {})[0];
+                              const firstAnswer = firstAnswerKey ? app.extra_data[firstAnswerKey] : null;
+                              const firstQuestionText = vacancy?.questions?.find(q => q.id === firstAnswerKey)?.question_text;
+                              return firstAnswerKey && firstAnswer && typeof firstAnswer === 'string' ? (
+                                <p className={`text-xs mb-2 line-clamp-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                  {firstQuestionText && <span className="font-medium">{firstQuestionText}: </span>}
+                                  {firstAnswer}
+                                </p>
+                              ) : null;
+                            })()}
                             <div className="flex items-center justify-between">
                               <span className={`text-[10px] ${ isDark ? 'text-gray-500' : 'text-gray-400' }`}>
                                 {new Date(app.created_at).toLocaleDateString()}
