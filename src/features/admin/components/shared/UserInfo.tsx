@@ -39,6 +39,7 @@ export default function UserInfo({
   width = 'min(92vw, 820px)',
 }: UserInfoProps) {
   const [cvLoading, setCvLoading] = useState<'view' | 'download' | null>(null);
+  const [activeTab, setActiveTab] = useState<'info' | 'responses'>('info');
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -146,98 +147,130 @@ export default function UserInfo({
                 </div>
               </div>
 
+              <div className="flex border-b border-border px-6 pt-4">
+                <button
+                  onClick={() => setActiveTab('info')}
+                  className={`pb-3 px-4 text-sm font-medium transition-colors border-b-2 ${
+                    activeTab === 'info'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Student Info
+                </button>
+                {extraDetails && Object.keys(extraDetails).length > 0 && (
+                  <button
+                    onClick={() => setActiveTab('responses')}
+                    className={`pb-3 px-4 text-sm font-medium transition-colors border-b-2 ${
+                      activeTab === 'responses'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    Form Responses
+                  </button>
+                )}
+              </div>
+
+
               <div className="grid gap-6 p-6 lg:grid-cols-[1.1fr_0.9fr]">
-                <div className="space-y-6">
-                  <div className="rounded-2xl border border-border bg-background/70 p-5">
-                    <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                      <FiUser className="h-5 w-5 text-primary" />
-                      About
-                    </div>
-                    <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                      {User.bio || 'No bio added yet.'}
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-border bg-background/70 p-5">
-                    <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                      <FiAward className="h-5 w-5 text-primary" />
-                      Account details
-                    </div>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                      {details.map(({ label, value: detailValue, icon: Icon }) => (
-                        <div key={label} className="rounded-xl border border-border bg-background px-3 py-3">
-                          <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                            <Icon className="h-4 w-4 text-primary" />
-                            {label}
-                          </div>
-                          <p className="mt-2 text-sm text-muted-foreground">{value(detailValue)}</p>
+                {activeTab === 'info' ? (
+                  <>
+                    <div className="space-y-6">
+                      <div className="rounded-2xl border border-border bg-background/70 p-5">
+                        <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                          <FiUser className="h-5 w-5 text-primary" />
+                          About
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                        <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                          {User.bio || 'No bio added yet.'}
+                        </p>
+                      </div>
 
-                  {extraDetails && Object.keys(extraDetails).length > 0 && (
-                    <div className="rounded-2xl border border-border bg-background/70 p-5">
+                      <div className="rounded-2xl border border-border bg-background/70 p-5">
+                        <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                          <FiAward className="h-5 w-5 text-primary" />
+                          Account details
+                        </div>
+                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                          {details.map(({ label, value: detailValue, icon: Icon }) => (
+                            <div key={label} className="rounded-xl border border-border bg-background px-3 py-3">
+                              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                                <Icon className="h-4 w-4 text-primary" />
+                                {label}
+                              </div>
+                              <p className="mt-2 text-sm text-muted-foreground">{value(detailValue)}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-border bg-background/70 p-5 h-fit">
                       <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
                         <FiFileText className="h-5 w-5 text-primary" />
-                        Form Responses
+                        CV
                       </div>
-                      <div className="mt-4 space-y-4">
-                        {Object.entries(extraDetails).map(([question, answer]) => (
-                          <div key={question}>
-                            <p className="text-sm font-semibold text-foreground">{question}</p>
-                            {typeof answer === 'string' && answer.startsWith('http') ? (
-                              <a href={answer} target="_blank" rel="noopener noreferrer" className="block break-all text-sm mt-1 text-primary hover:underline">
-                                {answer}
-                              </a>
-                            ) : (
-                              <p className="mt-1 text-sm leading-6 text-muted-foreground">{String(answer)}</p>
-                            )}
+                      {hasCv(User) ? (
+                        <div className="mt-5 rounded-xl border border-dashed border-border bg-background p-4">
+                          <p className="text-sm font-semibold text-foreground">
+                            {User.name.replace(/\s+/g, '_')}_CV.pdf
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">PDF document</p>
+                          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                            <button
+                              type="button"
+                              onClick={() => handleCv('view')}
+                              disabled={cvLoading !== null}
+                              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-60"
+                            >
+                              {cvLoading === 'view' ? <FiLoader className="h-4 w-4 animate-spin" /> : <FiEye className="h-4 w-4" />}
+                              View CV
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleCv('download')}
+                              disabled={cvLoading !== null}
+                              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted disabled:opacity-60"
+                            >
+                              {cvLoading === 'download' ? <FiLoader className="h-4 w-4 animate-spin" /> : <FiDownload className="h-4 w-4" />}
+                              Download
+                            </button>
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      ) : (
+                        <div className="mt-5 rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
+                          No CV uploaded for this user.
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-
-                <div className="rounded-2xl border border-border bg-background/70 p-5">
-                  <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                    <FiFileText className="h-5 w-5 text-primary" />
-                    CV
+                  </>
+                ) : (
+                  <div className="col-span-1 lg:col-span-2">
+                    {extraDetails && Object.keys(extraDetails).length > 0 && (
+                      <div className="rounded-2xl border border-border bg-background/70 p-5">
+                        <div className="flex items-center gap-2 text-lg font-semibold text-foreground mb-4">
+                          <FiFileText className="h-5 w-5 text-primary" />
+                          Form Responses
+                        </div>
+                        <div className="space-y-4">
+                          {Object.entries(extraDetails).map(([question, answer]) => (
+                            <div key={question} className="rounded-xl border border-border bg-background p-4">
+                              <p className="text-sm font-semibold text-foreground mb-2">{question}</p>
+                              {typeof answer === 'string' && answer.startsWith('http') ? (
+                                <a href={answer} target="_blank" rel="noopener noreferrer" className="inline-block break-all text-sm text-primary hover:underline bg-primary/10 px-3 py-2 rounded-lg transition-colors hover:bg-primary/20">
+                                  {answer}
+                                </a>
+                              ) : (
+                                <p className="text-sm leading-6 text-muted-foreground">{String(answer)}</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {hasCv(User) ? (
-                    <div className="mt-5 rounded-xl border border-dashed border-border bg-background p-4">
-                      <p className="text-sm font-semibold text-foreground">
-                        {User.name.replace(/\s+/g, '_')}_CV.pdf
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">PDF document</p>
-                      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                        <button
-                          type="button"
-                          onClick={() => handleCv('view')}
-                          disabled={cvLoading !== null}
-                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-60"
-                        >
-                          {cvLoading === 'view' ? <FiLoader className="h-4 w-4 animate-spin" /> : <FiEye className="h-4 w-4" />}
-                          View CV
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleCv('download')}
-                          disabled={cvLoading !== null}
-                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted disabled:opacity-60"
-                        >
-                          {cvLoading === 'download' ? <FiLoader className="h-4 w-4 animate-spin" /> : <FiDownload className="h-4 w-4" />}
-                          Download
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-5 rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
-                      No CV uploaded for this user.
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           )}
