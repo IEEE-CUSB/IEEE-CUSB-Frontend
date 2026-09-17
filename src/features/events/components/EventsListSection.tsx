@@ -8,7 +8,6 @@ import { useTheme } from '@/shared/hooks/useTheme';
 import { useGetCategories } from '@/shared/queries/categories/categories.queries';
 import { CategoryType } from '@/shared/types/category.types';
 
-type FilterType = string;
 
 // Helper function to determine event status based on dates
 const getEventStatus = (event: Event): 'Upcoming' | 'Ongoing' | 'Completed' => {

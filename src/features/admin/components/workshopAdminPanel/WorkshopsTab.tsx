@@ -33,6 +33,7 @@ const WorkshopsTab: React.FC = () => {
   // Queries & Mutations
   const searchType = filterValues.searchBy || 'search';
   const { data, isLoading } = useGetAdminWorkshops({
+    include_unpublished: true,
     page,
     limit,
     search: searchType === 'search' ? debouncedSearch : undefined,

@@ -62,7 +62,7 @@ export const EventsPage = () => {
   
   /* API hooks */
   const { data: categoriesData } = useGetCategories({ type: CategoryType.EVENT, limit: 100 });
-  const { data, isLoading } = useEvents({ page, limit, search: debouncedSearch, category_id: filterValues.category });
+  const { data, isLoading } = useEvents({ page, limit, search: debouncedSearch, category_id: filterValues.category, include_unpublished: true });
   const createEventMutation = useCreateEvent();
   const updateEventMutation = useUpdateEvent();
   const deleteEventMutation = useDeleteEvent();

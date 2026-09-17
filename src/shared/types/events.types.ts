@@ -93,6 +93,7 @@ export interface UpdateEventRequest {
   end_time?: string;
   capacity?: number;
   registration_deadline?: string;
+  is_published?: boolean;
 }
 
 /**

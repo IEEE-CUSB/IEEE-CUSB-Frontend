@@ -4,12 +4,9 @@ import { Pagination } from '@/shared/components/ui/Pagination';
 import type { Workshop } from '@/shared/types/workshops.types';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { useDebounce } from '@/shared/hooks/useDebounce';
-import { useGetCategories } from '@/shared/queries/categories/categories.queries';
-import { CategoryType } from '@/shared/types/category.types';
 import { WorkshopsFilterBar } from './WorkshopsFilterBar';
 import { WorkshopCard } from './WorkshopCard';
 
-type FilterType = string;
 
 
 // Helper function to determine workshop status based on dates
@@ -81,13 +78,12 @@ export const WorkshopsListSection = () => {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 300);
 
-  const { data: categoriesData } = useGetCategories({ type: CategoryType.WORKSHOP, limit: 100 });
 
   const { data, isLoading, isError, error, isFetching } = useWorkshops({
     page,
     limit,
     search: debouncedSearch,
-    category_id: activeCategoryId !== 'All' ? activeFilter : undefined,
+    category_id: activeCategoryId !== 'All' ? activeCategoryId : undefined,
   });
 
   // Safely extract workshops array - handle different response structures
@@ -120,7 +116,6 @@ export const WorkshopsListSection = () => {
             search={search}
             onSearchChange={setSearch}
             darkMode={isDark}
-            categories={categoriesData?.categories}
           />
 
           {/* Loading skeleton grid */}
@@ -195,7 +190,6 @@ export const WorkshopsListSection = () => {
           search={search}
           onSearchChange={setSearch}
           darkMode={isDark}
-            categories={categoriesData?.categories}
         />
 
         {/* Empty state */}
@@ -217,7 +211,6 @@ export const WorkshopsListSection = () => {
                   workshop={workshop}
                   index={index}
                   darkMode={isDark}
-            categories={categoriesData?.categories}
                 />
               ))}
             </div>
