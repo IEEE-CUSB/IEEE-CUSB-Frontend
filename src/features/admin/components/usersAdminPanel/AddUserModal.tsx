@@ -50,7 +50,7 @@ const AddUserModal = ({
 
   const onSubmit = (data: any) => {
     // Send data to backend — Zod coerces academic_year to number
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { major, ...rest } = data;
     register(
       {

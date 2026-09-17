@@ -62,7 +62,7 @@ export const getErrorMessage = (error: unknown): string => {
   if (!error) return 'Unknown error occurred';
   if (typeof error === 'string') return error;
   if (error instanceof Error) return error.message;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   if ((error as any).message) return (error as any).message;
   return 'Unknown error occurred';
 };
