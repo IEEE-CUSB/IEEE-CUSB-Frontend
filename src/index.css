@@ -263,3 +263,30 @@
     opacity: 1;
   }
 }
+
+/* React Quill Dark Mode */
+.dark-mode-quill .ql-toolbar {
+  background-color: var(--color-background-light);
+  border-color: var(--color-border);
+}
+.dark-mode-quill .ql-container {
+  background-color: var(--color-background);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+.dark-mode-quill .ql-toolbar .ql-stroke {
+  stroke: var(--color-text-primary);
+}
+.dark-mode-quill .ql-toolbar .ql-fill {
+  fill: var(--color-text-primary);
+}
+.dark-mode-quill .ql-toolbar .ql-picker {
+  color: var(--color-text-primary);
+}
+.dark-mode-quill .ql-toolbar .ql-picker-options {
+  background-color: var(--color-background-light);
+  border-color: var(--color-border);
+}
+.dark-mode-quill .ql-editor.ql-blank::before {
+  color: var(--color-text-muted);
+}
