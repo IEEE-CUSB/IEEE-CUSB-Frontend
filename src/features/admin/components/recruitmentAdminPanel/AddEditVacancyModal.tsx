@@ -4,8 +4,8 @@ import { useTheme } from '@/shared/hooks/useTheme';
 import { FiUpload, FiTrash2, FiImage, FiX, FiPlus, FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { Toggle } from '@/shared/components/ui/Toggle';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import {
   AddVacancy,
   UpdateVacancy,
