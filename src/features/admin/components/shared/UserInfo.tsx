@@ -55,7 +55,7 @@ export default function UserInfo({
       const urlParts = fileUrl.split('applications/');
       const fileKey = 'applications/' + urlParts[urlParts.length - 1];
 
-      const response = await apiClient.get<any>(`/admin/recruitment/files/${encodeURIComponent(fileKey)}`, {
+      const response = await apiClient.get<any>(`/admin/recruitment/file/download?key=${encodeURIComponent(fileKey)}`, {
         responseType: 'blob'
       });
       const blob = new Blob([response.data], { type: response.headers['content-type'] });
@@ -294,7 +294,7 @@ export default function UserInfo({
                                   className="inline-flex text-left items-center gap-2 break-all text-sm text-primary hover:underline bg-primary/10 px-3 py-2 rounded-lg transition-colors hover:bg-primary/20 disabled:opacity-60"
                                 >
                                   {downloadingFile === answer ? <FiLoader className="w-4 h-4 animate-spin shrink-0" /> : <FiDownload className="w-4 h-4 shrink-0" />}
-                                  <span className="line-clamp-1">{answer.split('/').pop()}</span>
+                                  <span className="line-clamp-1">View / Download File</span>
                                 </button>
                               ) : (
                                 <p className="text-sm leading-6 text-muted-foreground">{String(answer)}</p>
