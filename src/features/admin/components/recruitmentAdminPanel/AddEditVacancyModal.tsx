@@ -3,6 +3,7 @@ import { InputField, Button, TextArea, Modal, Select } from '@ieee-ui/ui';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { FiUpload, FiTrash2, FiImage, FiX } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
+import { Toggle } from '@/shared/components/ui/Toggle';
 import {
   AddVacancy,
   UpdateVacancy,
@@ -267,50 +268,13 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
             <label className={`block text-sm font-medium mb-1.5 ${ isDark ? 'text-gray-300' : 'text-gray-700' }`}>
               Status
             </label>
-            <div className="flex items-center gap-3">
-              {/* Toggle switch */}
-              <label
-                className="relative inline-block cursor-pointer"
-                style={{ fontSize: 17, width: '3.5em', height: '2em' }}
-              >
-                <input
-                  type="checkbox"
-                  checked={formValues.is_open}
-                  onChange={e => setFormValues(prev => ({ ...prev, is_open: e.target.checked }))}
-                  className="opacity-0 w-0 h-0 absolute"
-                />
-                {/* Track */}
-                <span
-                  className="absolute inset-0 rounded-full transition-all duration-300"
-                  style={{
-                    background: formValues.is_open ? '#22c55e' : (isDark ? '#4b5563' : '#d1d5db'),
-                    transition: 'background 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
-                  }}
-                />
-                {/* Thumb */}
-                <span
-                  className="absolute rounded-full bg-white shadow-lg"
-                  style={{
-                    height: formValues.is_open ? '2em' : '1.4em',
-                    width: formValues.is_open ? '2em' : '1.4em',
-                    left: formValues.is_open ? 'calc(100% - 2em)' : '0.3em',
-                    bottom: formValues.is_open ? 0 : '0.3em',
-                    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                    boxShadow: '0 0 20px rgba(0,0,0,0.4)',
-                  }}
-                />
-              </label>
-              {/* Label */}
-              <span
-                className={`text-sm font-semibold ${
-                  formValues.is_open
-                    ? (isDark ? 'text-green-400' : 'text-green-600')
-                    : (isDark ? 'text-gray-400' : 'text-gray-500')
-                }`}
-              >
-                {formValues.is_open ? 'Open' : 'Closed'}
-              </span>
-            </div>
+            <Toggle
+              checked={formValues.is_open}
+              onChange={val => setFormValues(prev => ({ ...prev, is_open: val }))}
+              labelOn="Open"
+              labelOff="Closed"
+              darkMode={isDark}
+            />
           </div>
         </div>
 
