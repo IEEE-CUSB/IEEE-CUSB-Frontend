@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fi';
 import { User } from '@/shared/types/auth.types';
 import { ApplicationExtraData } from '@/shared/types/recruitment.types';
+import { apiClient } from '@/shared/config/api.config';
 import { usersApi } from '@/shared/queries/users/users.queries';
 import toast from 'react-hot-toast';
 
@@ -38,8 +39,36 @@ export default function UserInfo({
   side = 'right',
   width = 'min(92vw, 820px)',
 }: UserInfoProps) {
-  const [cvLoading, setCvLoading] = useState<'view' | 'download' | null>(null);
+    const [cvLoading, setCvLoading] = useState<'view' | 'download' | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'responses'>('info');
+  const [downloadingFile, setDownloadingFile] = useState<string | null>(null);
+
+  const handleDownloadApplicationFile = async (fileUrl: string) => {
+    // If it's a Cloudinary link or external link, open directly
+    if (!fileUrl.includes('applications/')) {
+      window.open(fileUrl, '_blank');
+      return;
+    }
+
+    setDownloadingFile(fileUrl);
+    try {
+      const urlParts = fileUrl.split('applications/');
+      const fileKey = 'applications/' + urlParts[urlParts.length - 1];
+
+      const response = await apiClient.get<any>(`/admin/recruitment/files/${encodeURIComponent(fileKey)}`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    } catch (e) {
+      toast.error('Failed to download file. It might have been deleted.');
+    } finally {
+      setDownloadingFile(null);
+    }
+  };
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -258,9 +287,15 @@ export default function UserInfo({
                             <div key={question} className="rounded-xl border border-border bg-background p-4">
                               <p className="text-sm font-semibold text-foreground mb-2">{question}</p>
                               {typeof answer === 'string' && answer.startsWith('http') ? (
-                                <a href={answer} target="_blank" rel="noopener noreferrer" className="inline-block break-all text-sm text-primary hover:underline bg-primary/10 px-3 py-2 rounded-lg transition-colors hover:bg-primary/20">
-                                  {answer}
-                                </a>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownloadApplicationFile(answer)}
+                                  disabled={downloadingFile === answer}
+                                  className="inline-flex text-left items-center gap-2 break-all text-sm text-primary hover:underline bg-primary/10 px-3 py-2 rounded-lg transition-colors hover:bg-primary/20 disabled:opacity-60"
+                                >
+                                  {downloadingFile === answer ? <FiLoader className="w-4 h-4 animate-spin shrink-0" /> : <FiDownload className="w-4 h-4 shrink-0" />}
+                                  <span className="line-clamp-1">{answer.split('/').pop()}</span>
+                                </button>
                               ) : (
                                 <p className="text-sm leading-6 text-muted-foreground">{String(answer)}</p>
                               )}
