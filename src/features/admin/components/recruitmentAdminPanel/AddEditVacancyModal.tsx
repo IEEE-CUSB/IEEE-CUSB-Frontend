@@ -236,7 +236,7 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
   const addOption = (questionIndex: number) => {
     setFormValues(prev => {
       const newQuestions = [...prev.questions];
-      const q = newQuestions[questionIndex]!;
+      const q = { ...newQuestions[questionIndex]! };
       q.options = [...(q.options || []), `Option ${(q.options?.length || 0) + 1}`];
       newQuestions[questionIndex] = q;
       return { ...prev, questions: newQuestions };
@@ -246,7 +246,7 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
   const updateOption = (questionIndex: number, optionIndex: number, value: string) => {
     setFormValues(prev => {
       const newQuestions = [...prev.questions];
-      const q = newQuestions[questionIndex]!;
+      const q = { ...newQuestions[questionIndex]! };
       const newOptions = [...(q.options || [])];
       newOptions[optionIndex] = value;
       q.options = newOptions;
@@ -258,7 +258,7 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
   const removeOption = (questionIndex: number, optionIndex: number) => {
     setFormValues(prev => {
       const newQuestions = [...prev.questions];
-      const q = newQuestions[questionIndex]!;
+      const q = { ...newQuestions[questionIndex]! };
       const newOptions = [...(q.options || [])];
       newOptions.splice(optionIndex, 1);
       q.options = newOptions;
@@ -362,19 +362,11 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
         <div className={`p-4 rounded-xl border ${isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50'}`}>
           <div className="flex items-center justify-between mb-4">
             <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Form Builder</h3>
-            <Button
-              buttonText="Add Question"
-              onClick={addQuestion}
-              type="basic"
-              width="fit"
-              darkMode={isDark}
-            />
           </div>
-          
           <div className="space-y-4">
             {formValues.questions.map((q, index) => (
-              <div key={q.id || index} className={`p-4 rounded-lg border ${isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-white'}`}>
-                <div className="flex items-start justify-between gap-4 mb-3">
+              <div key={index} className={`p-4 rounded-xl border ${isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}>
+                <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1">
                     <InputField
                       label={`Question ${index + 1}`}
@@ -385,15 +377,16 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
                       id={`q-${index}`}
                     />
                   </div>
-                  <div className="flex items-center gap-2 pt-7">
-                    <button onClick={() => moveQuestion(index, 'up')} disabled={index === 0} className={`p-1.5 rounded hover:bg-gray-200 disabled:opacity-50 ${isDark ? 'hover:bg-gray-600 text-gray-300' : 'text-gray-600'}`}><FiArrowUp /></button>
-                    <button onClick={() => moveQuestion(index, 'down')} disabled={index === formValues.questions.length - 1} className={`p-1.5 rounded hover:bg-gray-200 disabled:opacity-50 ${isDark ? 'hover:bg-gray-600 text-gray-300' : 'text-gray-600'}`}><FiArrowDown /></button>
-                    <button onClick={() => removeQuestion(index)} className="p-1.5 rounded hover:bg-red-100 text-red-500"><FiTrash2 /></button>
-                  </div>
+                  <button type="button"
+                    onClick={() => removeQuestion(index)}
+                    className="mt-8 p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
+                  >
+                    <FiTrash2 className="w-5 h-5" />
+                  </button>
                 </div>
                 
-                <div className="flex flex-wrap items-end gap-4">
-                  <div className="w-48">
+                <div className="flex gap-4 items-center">
+                  <div className="flex-1">
                     <Select
                       id={`type-${index}`}
                       label="Type"
@@ -408,7 +401,7 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
                       darkMode={isDark}
                     />
                   </div>
-                  <div className="pb-1">
+                  <div className="pt-6">
                     <Toggle
                       checked={q.is_required}
                       onChange={(val) => updateQuestion(index, 'is_required', val)}
@@ -420,22 +413,25 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
                 </div>
 
                 {q.type === 'MULTIPLE_CHOICE' && (
-                  <div className="mt-4 space-y-2 pl-4 border-l-2 border-gray-300 dark:border-gray-500">
+                  <div className={`mt-4 p-3 rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Options</label>
                     {q.options?.map((opt, optIndex) => (
-                      <div key={optIndex} className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={opt}
-                          onChange={(e) => updateOption(index, optIndex, e.target.value)}
-                          className={`flex-1 p-2 text-sm rounded border focus:outline-none focus:ring-2 focus:ring-primary ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}`}
-                          placeholder={`Option ${optIndex + 1}`}
-                        />
-                        <button onClick={() => removeOption(index, optIndex)} className="p-1.5 text-red-500 hover:bg-red-100 rounded">
+                      <div key={optIndex} className="flex items-center gap-2 mb-2">
+                        <div className="flex-1">
+                          <InputField
+                            id={`opt-${index}-${optIndex}`}
+                            value={opt}
+                            onChange={(e) => updateOption(index, optIndex, e.target.value)}
+                            placeholder={`Option ${optIndex + 1}`}
+                            darkMode={isDark}
+                          />
+                        </div>
+                        <button type="button" onClick={() => removeOption(index, optIndex)} className="p-1.5 text-red-500 hover:bg-red-100 rounded">
                           <FiX />
                         </button>
                       </div>
                     ))}
-                    <button onClick={() => addOption(index)} className={`text-sm flex items-center gap-1 mt-2 ${isDark ? 'text-primary-light hover:text-primary' : 'text-primary hover:text-primary-dark'}`}>
+                    <button type="button" onClick={() => addOption(index)} className={`text-sm flex items-center gap-1 mt-2 ${isDark ? 'text-primary-light hover:text-primary' : 'text-primary hover:text-primary-dark'}`}>
                       <FiPlus /> Add Option
                     </button>
                   </div>
@@ -446,6 +442,16 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
             {formValues.questions.length === 0 && (
               <p className={`text-center py-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No questions added yet. Click "Add Question" to start building your form.</p>
             )}
+
+            <div className="flex justify-center mt-4">
+              <Button
+                buttonText="Add Question"
+                onClick={addQuestion}
+                type="basic"
+                width="fit"
+                darkMode={isDark}
+              />
+            </div>
           </div>
         </div>
 
@@ -488,14 +494,14 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
             <div className="relative w-full h-44 rounded-xl overflow-hidden group">
               <img src={currentImageUrl} alt="Preview" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                <button
+                <button type="button"
                   onClick={() => primaryFileRef.current?.click()}
                   className="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
                   title="Replace image"
                 >
                   <FiUpload className="w-5 h-5" />
                 </button>
-                <button
+                <button type="button"
                   onClick={apiVacancy?.image_public_id && !pendingImage ? handleMarkDeleteImage : handleClearImage}
                   className="p-2 rounded-lg bg-red-500/70 hover:bg-red-500 text-white transition-colors"
                   title="Remove image"
@@ -505,14 +511,14 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
               </div>
               {pendingImage && (
                 <div className="absolute top-2 right-2">
-                  <button onClick={handleClearImage} className="p-1 rounded-full bg-black/50 text-white hover:bg-black/70">
+                  <button type="button" onClick={handleClearImage} className="p-1 rounded-full bg-black/50 text-white hover:bg-black/70">
                     <FiX className="w-3 h-3" />
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <button
+            <button type="button"
               onClick={() => primaryFileRef.current?.click()}
               className={`w-full h-36 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-colors ${
                 isDark

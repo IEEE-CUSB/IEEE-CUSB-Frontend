@@ -133,7 +133,7 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
             </div>
             {vacancy.description && (
               <div
-                className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} prose prose-sm max-w-none ${isDark ? 'prose-invert' : ''}`}
+                className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} prose prose-sm max-w-none overflow-hidden break-words [prose-sm max-w-none_a]:break-all [prose-sm max-w-none_p]:break-words ${isDark ? 'prose-invert' : ''}`}
                 dangerouslySetInnerHTML={{ __html: vacancy.description }}
               />
             )}
