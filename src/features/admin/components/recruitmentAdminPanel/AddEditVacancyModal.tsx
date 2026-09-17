@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { InputField, Button, Modal, Select } from '@ieee-ui/ui';
 import { useTheme } from '@/shared/hooks/useTheme';
-import { FiUpload, FiTrash2, FiImage, FiX, FiPlus, FiArrowUp, FiArrowDown } from 'react-icons/fi';
+import { FiUpload, FiTrash2, FiImage, FiX, FiPlus, } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { Toggle } from '@/shared/components/ui/Toggle';
 import ReactQuill from 'react-quill-new';
@@ -189,7 +189,7 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
         {
           id: Date.now().toString(),
           type: 'TEXT',
-          question: '',
+          question_text: '',
           is_required: false,
         },
       ],
@@ -217,21 +217,7 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
     }));
   };
 
-  const moveQuestion = (index: number, direction: 'up' | 'down') => {
-    setFormValues(prev => {
-      const newQuestions = [...prev.questions];
-      if (direction === 'up' && index > 0) {
-        const temp = newQuestions[index - 1];
-        newQuestions[index - 1] = newQuestions[index]!;
-        newQuestions[index] = temp!;
-      } else if (direction === 'down' && index < newQuestions.length - 1) {
-        const temp = newQuestions[index + 1];
-        newQuestions[index + 1] = newQuestions[index]!;
-        newQuestions[index] = temp!;
-      }
-      return { ...prev, questions: newQuestions };
-    });
-  };
+
 
   const addOption = (questionIndex: number) => {
     setFormValues(prev => {
@@ -279,7 +265,7 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
     
     // validate questions
     for (const q of formValues.questions) {
-      if (!q.question.trim()) {
+      if (!q.question_text.trim()) {
         toast.error('All questions must have a title.');
         return;
       }
@@ -370,8 +356,8 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
                   <div className="flex-1">
                     <InputField
                       label={`Question ${index + 1}`}
-                      value={q.question}
-                      onChange={(e) => updateQuestion(index, 'question', e.target.value)}
+                      value={q.question_text}
+                      onChange={(e) => updateQuestion(index, 'question_text', e.target.value)}
                       placeholder="Enter question text..."
                       darkMode={isDark}
                       id={`q-${index}`}

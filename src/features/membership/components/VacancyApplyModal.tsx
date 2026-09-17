@@ -170,7 +170,7 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
                   {q.type === 'TEXT' && (
                     <InputField
                       id={`q-${qId}`}
-                      label={`${q.question}${q.is_required ? ' *' : ''}`}
+                      label={`${q.question_text}${q.is_required ? ' *' : ''}`}
                       value={answers[qId] || ''}
                       onChange={(e) => handleInputChange(qId, e.target.value)}
                       error={errors[qId]}
@@ -180,7 +180,7 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
                   {q.type === 'LONG_TEXT' && (
                     <TextArea
                       id={`q-${qId}`}
-                      label={`${q.question}${q.is_required ? ' *' : ''}`}
+                      label={`${q.question_text}${q.is_required ? ' *' : ''}`}
                       value={answers[qId] || ''}
                       onChange={(e) => handleInputChange(qId, e.target.value)}
                       error={errors[qId]}
@@ -190,7 +190,7 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
                   {q.type === 'MULTIPLE_CHOICE' && (
                     <Select
                       id={`q-${qId}`}
-                      label={`${q.question}${q.is_required ? ' *' : ''}`}
+                      label={`${q.question_text}${q.is_required ? ' *' : ''}`}
                       value={answers[qId] || ''}
                       onChange={(e) => handleInputChange(qId, e.target.value)}
                       options={[
@@ -204,7 +204,7 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
                   {q.type === 'FILE' && (
                     <div>
                       <label className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {q.question}{q.is_required && ' *'}
+                        {q.question_text}{q.is_required && ' *'}
                       </label>
                       <input
                         type="file"

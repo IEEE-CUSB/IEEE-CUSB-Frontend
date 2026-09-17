@@ -23,7 +23,7 @@ export enum ApplicationStatus {
 export interface Question {
   id?: string;
   type: 'TEXT' | 'LONG_TEXT' | 'MULTIPLE_CHOICE' | 'FILE';
-  question: string;
+  question_text: string;
   is_required: boolean;
   options?: string[];
   order?: number;
