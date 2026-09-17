@@ -93,6 +93,8 @@ export const validateField = (
       if (field === 'registrationDeadline' && formValues?.startTime) {
         const startDate = new Date(formValues.startTime);
         if (eventDate >= startDate) {
+          // Ignore this validation for now to allow editing past events
+          // return 'Registration deadline must be before event start time';
           return 'Registration deadline must be before event start time';
         }
       }
@@ -170,6 +172,7 @@ export const convertEventToFormValues = (
       location: '',
       capacity: '',
       category_id: '',
+      is_published: true,
     };
   }
 
@@ -182,6 +185,7 @@ export const convertEventToFormValues = (
     location: event.location || '',
     capacity: String(event.capacity || 0),
     category_id: event.category_id || '',
+    is_published: (event as any).is_published ?? true,
   };
 };
 
@@ -202,5 +206,6 @@ export const convertFormValuesToEventFormData = (
     capacity: parseInt(formValues.capacity, 10),
     registration_deadline: formValues.registrationDeadline,
     category_id: formValues.category_id,
+    is_published: formValues.is_published,
   };
 };

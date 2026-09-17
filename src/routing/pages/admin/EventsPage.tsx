@@ -226,6 +226,16 @@ export const EventsPage = () => {
         },
       },
       {
+        header: 'Visibility',
+        cell: (item: Event) => (
+          <div onClick={() => handleView(item)} className="cursor-pointer">
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item.is_published !== false ? (isDark ? 'bg-green-900/30 text-green-300' : 'bg-green-50 text-green-700') : (isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>
+              {item.is_published !== false ? 'Published' : 'Hidden'}
+            </span>
+          </div>
+        ),
+      },
+      {
         header: 'Capacity',
         cell: (item: Event) => (
           <div onClick={() => handleView(item)} className="cursor-pointer">

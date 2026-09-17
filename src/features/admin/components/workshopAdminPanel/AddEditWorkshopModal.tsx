@@ -11,6 +11,7 @@ import {
 import { SearchableMultiSelect } from '@/shared/components/ui/SearchableMultiSelect';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { toast } from 'react-hot-toast';
+import { Toggle } from '@/shared/components/ui/Toggle';
 import { FiUpload, FiTrash2, FiImage, FiX, FiPlus } from 'react-icons/fi';
 import {
   useGetInstructors,
@@ -47,6 +48,7 @@ interface FormValues {
   capacity: string;
   registration_deadline: string;
   instructor_ids: string[];
+  is_published: boolean;
 }
 
 const empty = (): FormValues => ({
@@ -60,6 +62,7 @@ const empty = (): FormValues => ({
   capacity: '0',
   registration_deadline: '',
   instructor_ids: [],
+  is_published: true,
 });
 
 const formatDateForInput = (dateString?: string) => {
@@ -81,6 +84,7 @@ const toForm = (w?: Workshop): FormValues =>
         capacity: String(w.capacity),
         registration_deadline: formatDateForInput(w.registration_deadline),
         instructor_ids: w.instructors?.map(i => i.id) || w.instructor_ids || [],
+        is_published: w.is_published ?? true,
       }
     : empty();
 
@@ -394,6 +398,7 @@ export const AddEditWorkshopModal: React.FC<ExtendedAddEditWorkshopModalProps> =
         ? new Date(formValues.registration_deadline).toISOString()
         : new Date(formValues.start_time).toISOString(),
       instructor_ids: formValues.instructor_ids,
+      is_published: formValues.is_published,
     };
 
     try {
@@ -552,27 +557,41 @@ export const AddEditWorkshopModal: React.FC<ExtendedAddEditWorkshopModalProps> =
               darkMode={isDark}
             />
           </div>
-          <div className="md:col-span-2">
-            <Select
-              id="category_id"
-              label="Category"
-              value={formValues.category_id}
-              onChange={handleInputChange('category_id')}
-              options={categoryOptions}
-              error={errors.category_id}
-              disabled={isLoadingCategories}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+            <div className="md:col-span-1">
+              <Select
+                id="category_id"
+                label="Category"
+                value={formValues.category_id}
+                onChange={handleInputChange('category_id')}
+                options={categoryOptions}
+                error={errors.category_id}
+                disabled={isLoadingCategories}
+                darkMode={isDark}
+              />
+            </div>
+            <NumberField
+              id="capacity"
+              label="Capacity"
+              value={formValues.capacity}
+              onChange={handleInputChange('capacity')}
+              placeholder="Enter workshop capacity"
+              error={errors.capacity}
               darkMode={isDark}
             />
+            <div className="md:col-span-2">
+              <label className={`block text-sm font-medium mb-1.5 ${ isDark ? 'text-gray-300' : 'text-gray-700' }`}>
+                Visibility
+              </label>
+              <Toggle
+                checked={formValues.is_published ?? true}
+                onChange={val => setFormValues(prev => ({ ...prev, is_published: val }))}
+                labelOn="Published"
+                labelOff="Hidden"
+                darkMode={isDark}
+              />
+            </div>
           </div>
-          <NumberField
-            id="capacity"
-            label="Capacity"
-            value={formValues.capacity}
-            onChange={handleInputChange('capacity')}
-            placeholder="Enter workshop capacity"
-            error={errors.capacity}
-            darkMode={isDark}
-          />
           <div className="md:col-span-2 mt-2">
             <SearchableMultiSelect
               label="Instructors"

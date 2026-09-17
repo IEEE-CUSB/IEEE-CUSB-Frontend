@@ -25,6 +25,7 @@ export interface EventFormValues {
   location: string;
   capacity: string;
   category_id: string;
+  is_published: boolean;
 }
 
 export interface FormErrors {

@@ -8,6 +8,7 @@ import {
   NumberField,
   Select,
 } from '@ieee-ui/ui';
+import { Toggle } from '@/shared/components/ui/Toggle';
 import type {
   AddEditEventModalProps,
   EventFormValues,
@@ -256,10 +257,24 @@ const AddEditEventModal: React.FC<ExtendedAddEditEventModalProps> = ({
           <div className="md:col-span-2">
             <InputField label="Location" value={formValues.location} placeholder="Enter event location" onChange={handleInputChange('location')} id="location" error={errors.location} darkMode={isDark} />
           </div>
-          <div className="md:col-span-2">
-            <Select id="category_id" label="Category" value={formValues.category_id} onChange={handleInputChange('category_id')} options={categoryOptions} error={errors.category_id} disabled={isLoadingCategories} darkMode={isDark} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2">
+            <div className="md:col-span-1">
+              <Select id="category_id" label="Category" value={formValues.category_id} onChange={handleInputChange('category_id')} options={categoryOptions} error={errors.category_id} disabled={isLoadingCategories} darkMode={isDark} />
+            </div>
+            <NumberField id="capacity" label="Capacity" value={formValues.capacity} onChange={handleInputChange('capacity')} placeholder="Enter event capacity" min={EVENT_FORM_CONSTRAINTS.capacity.min.toString()} max={EVENT_FORM_CONSTRAINTS.capacity.max.toString()} error={errors.capacity} darkMode={isDark} />
+            <div className="md:col-span-2">
+              <label className={`block text-sm font-medium mb-1.5 ${ isDark ? 'text-gray-300' : 'text-gray-700' }`}>
+                Visibility
+              </label>
+              <Toggle
+                checked={formValues.is_published ?? true}
+                onChange={val => setFormValues(prev => ({ ...prev, is_published: val }))}
+                labelOn="Published"
+                labelOff="Hidden"
+                darkMode={isDark}
+              />
+            </div>
           </div>
-          <NumberField id="capacity" label="Capacity" value={formValues.capacity} onChange={handleInputChange('capacity')} placeholder="Enter event capacity" min={EVENT_FORM_CONSTRAINTS.capacity.min.toString()} max={EVENT_FORM_CONSTRAINTS.capacity.max.toString()} error={errors.capacity} darkMode={isDark} />
         </div>
 
         {/* ── Cover Image ─── */}

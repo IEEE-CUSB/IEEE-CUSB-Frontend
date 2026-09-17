@@ -10,6 +10,7 @@ export interface EventFormData {
   capacity: number;
   registration_deadline: string;
   category_id: string;
+  is_published?: boolean;
 }
 
 export interface CreateEventPayload {
@@ -21,6 +22,7 @@ export interface CreateEventPayload {
   capacity: number;
   registration_deadline: string;
   category_id: string;
+  is_published?: boolean;
 }
 
 export interface UpdateEventPayload {
@@ -33,6 +35,7 @@ export interface UpdateEventPayload {
   capacity: number;
   registration_deadline: string;
   category_id: string;
+  is_published?: boolean;
 }
 
 export const convertEventToFormData = (event: AdminEvent): EventFormData => {

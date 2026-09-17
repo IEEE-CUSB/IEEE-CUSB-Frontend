@@ -27,6 +27,7 @@ export interface Event {
   images?: EventGalleryImage[];
   is_registered?: boolean;
   registration_id?: string;
+  is_published?: boolean;
 }
 
 /**
@@ -77,6 +78,7 @@ export interface CreateEventRequest {
   end_time: string;
   capacity: number;
   registration_deadline: string;
+  is_published?: boolean;
 }
 
 /**

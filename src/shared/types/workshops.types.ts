@@ -46,6 +46,7 @@ export interface Workshop {
   images?: WorkshopGalleryImage[];
   is_registered?: boolean;
   registration_id?: string;
+  is_published?: boolean;
 }
 
 /**
@@ -100,6 +101,7 @@ export interface CreateWorkshopRequest {
   end_time: string;
   capacity: number;
   registration_deadline: string;
+  is_published?: boolean;
   instructor_ids?: string[];
 }
 
@@ -133,6 +135,7 @@ export interface UpdateWorkshopRequest {
   capacity?: number;
   registration_deadline?: string;
   instructor_ids?: string[];
+  is_published?: boolean;
 }
 
 /**

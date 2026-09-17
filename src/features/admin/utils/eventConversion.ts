@@ -21,6 +21,7 @@ export type AdminEvent = {
   registeredCount: number;
   attendeeCount: number;
   endTime: string;
+  is_published?: boolean;
 };
 
 /**
@@ -48,6 +49,7 @@ export const convertApiEventToAdminEvent = (event: ApiEvent): AdminEvent => {
     registeredCount: 0, // This would come from registrations count
     attendeeCount: 0, // This would come from attended registrations count
     endTime: new Date(event.end_time).toISOString().slice(0, 16),
+    is_published: event.is_published ?? true,
   };
 };
 
@@ -78,6 +80,7 @@ export const convertFormDataToCreateRequest = (
     end_time: formData.end_time,
     capacity: formData.capacity,
     registration_deadline: formData.registration_deadline,
+    is_published: formData.is_published,
   };
 };
 
@@ -97,5 +100,6 @@ export const convertFormDataToUpdateRequest = (
     end_time: formData.end_time,
     capacity: formData.capacity,
     registration_deadline: formData.registration_deadline,
+    is_published: formData.is_published,
   };
 };
