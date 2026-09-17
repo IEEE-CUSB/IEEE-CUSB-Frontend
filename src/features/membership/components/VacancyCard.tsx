@@ -73,7 +73,7 @@ export const VacancyCard = ({ vacancy, onApply, hasApplied }: VacancyCardProps) 
           <p className={`text-sm line-clamp-3 flex-1 ${
             isDark ? 'text-gray-400' : 'text-gray-600'
           }`}>
-            {vacancy.description}
+            {vacancy.description.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
           </p>
         )}
 

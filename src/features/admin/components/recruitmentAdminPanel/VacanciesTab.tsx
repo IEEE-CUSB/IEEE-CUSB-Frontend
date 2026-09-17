@@ -282,7 +282,7 @@ const VacanciesTab = () => {
                 }
               )}`}
               badge={badgeText}
-              description={vacancy.description ?? undefined}
+              description={vacancy.description ? vacancy.description.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ') : undefined}
               avatar={
                 vacancy.image_url ? (
                   <img
