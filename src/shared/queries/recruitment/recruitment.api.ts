@@ -200,3 +200,14 @@ export const deleteVacancyImage = async (vacancyId: string): Promise<Vacancy> =>
   );
   return response.data.data;
 };
+
+export const uploadApplicationFile = async (file: File): Promise<{ url: string }> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await apiClient.post<ApiResponse<{ url: string }>>(
+    '/recruitment/applications/upload',
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+  return response.data.data;
+};

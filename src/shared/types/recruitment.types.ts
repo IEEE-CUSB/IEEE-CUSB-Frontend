@@ -20,6 +20,15 @@ export enum ApplicationStatus {
   REJECTED = 'REJECTED',
 }
 
+export interface Question {
+  id?: string;
+  type: 'TEXT' | 'LONG_TEXT' | 'MULTIPLE_CHOICE' | 'FILE';
+  question: string;
+  is_required: boolean;
+  options?: string[];
+  order?: number;
+}
+
 export interface Vacancy {
   id: string;
   title: string;
@@ -29,14 +38,13 @@ export interface Vacancy {
   is_open: boolean;
   category_id?: string | null;
   category?: Category | null;
+  questions?: Question[];
   created_at: string;
   updated_at: string;
 }
 
 export interface ApplicationExtraData {
-  why_join: string;
-  portfolio?: string;
-  [key: string]: any; // To support future extra data
+  [key: string]: any; // To support dynamic answers
 }
 
 export interface Application {
@@ -59,6 +67,7 @@ export interface AddVacancy {
   description: string;
   is_open: boolean;
   category_id?: string | null;
+  questions?: Question[];
 }
 
 export interface UpdateVacancy {
@@ -66,6 +75,7 @@ export interface UpdateVacancy {
   description?: string;
   is_open?: boolean;
   category_id?: string | null;
+  questions?: Question[];
 }
 
 export interface UpdateStatus {

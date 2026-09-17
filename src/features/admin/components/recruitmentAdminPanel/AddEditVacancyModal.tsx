@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { InputField, Button, TextArea, Modal, Select } from '@ieee-ui/ui';
+import { InputField, Button, Modal, Select } from '@ieee-ui/ui';
 import { useTheme } from '@/shared/hooks/useTheme';
-import { FiUpload, FiTrash2, FiImage, FiX } from 'react-icons/fi';
+import { FiUpload, FiTrash2, FiImage, FiX, FiPlus, FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { Toggle } from '@/shared/components/ui/Toggle';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import {
   AddVacancy,
   UpdateVacancy,
   Vacancy,
+  Question,
 } from '@/shared/types/recruitment.types';
 import { CategoryType } from '@/shared/types/category.types';
 import { useUploadVacancyImage, useDeleteVacancyImage } from '@/shared/queries/recruitment';
@@ -29,6 +32,7 @@ interface FormValues {
   updated_at: string;
   is_open: boolean;
   category_id: string;
+  questions: Question[];
 }
 
 const empty = (): FormValues => ({
@@ -38,6 +42,7 @@ const empty = (): FormValues => ({
   updated_at: '',
   is_open: true,
   category_id: '',
+  questions: [],
 });
 
 const formatDateForInput = (dateString?: string) => {
@@ -57,6 +62,7 @@ const toForm = (v?: Vacancy): FormValues =>
         updated_at: formatDateForInput(v.updated_at),
         is_open: v.is_open,
         category_id: v.category_id ?? v.category?.id ?? '',
+        questions: v.questions || [],
       }
     : empty();
 
@@ -72,12 +78,10 @@ const validate = (v: FormValues): Errs => {
     e.title = 'Title must be less than 100 characters.';
   }
 
-  if (!v.description.trim()) {
+  // Quill might put '<p><br></p>' for empty
+  const plainTextDesc = v.description.replace(/<[^>]*>?/gm, '').trim();
+  if (!plainTextDesc) {
     e.description = 'Description is required.';
-  } else if (v.description.trim().length < 6) {
-    e.description = 'Description must be at least 6 characters.';
-  } else if (v.description.trim().length > 1000) {
-    e.description = 'Description must be less than 1000 characters.';
   }
   return e;
 };
@@ -93,7 +97,6 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
   const { isDark } = useTheme();
   const isEditMode = !!vacancy;
   const vacancyId = apiVacancy?.id || vacancy?.id;
-
 
   // Image upload state
   const primaryFileRef = useRef<HTMLInputElement>(null);
@@ -168,14 +171,100 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
       if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
     };
 
-  const handleTextAreaChange =
-    (field: 'description') => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setFormValues(prev => ({ ...prev, [field]: e.target.value }));
-      if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
-    };
+  const handleDescriptionChange = (value: string) => {
+    setFormValues(prev => ({ ...prev, description: value }));
+    if (errors.description) setErrors(prev => ({ ...prev, description: undefined }));
+  };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormValues(prev => ({ ...prev, category_id: e.target.value }));
+  };
+
+  /* Questions Handlers */
+  const addQuestion = () => {
+    setFormValues(prev => ({
+      ...prev,
+      questions: [
+        ...prev.questions,
+        {
+          id: Date.now().toString(),
+          type: 'TEXT',
+          question: '',
+          is_required: false,
+        },
+      ],
+    }));
+  };
+
+  const updateQuestion = (index: number, field: keyof Question, value: any) => {
+    setFormValues(prev => {
+      const newQuestions = [...prev.questions];
+      const q = { ...newQuestions[index], [field]: value } as Question;
+      if (field === 'type' && value !== 'MULTIPLE_CHOICE') {
+        q.options = [];
+      } else if (field === 'type' && value === 'MULTIPLE_CHOICE') {
+        q.options = ['Option 1'];
+      }
+      newQuestions[index] = q;
+      return { ...prev, questions: newQuestions };
+    });
+  };
+
+  const removeQuestion = (index: number) => {
+    setFormValues(prev => ({
+      ...prev,
+      questions: prev.questions.filter((_, i) => i !== index),
+    }));
+  };
+
+  const moveQuestion = (index: number, direction: 'up' | 'down') => {
+    setFormValues(prev => {
+      const newQuestions = [...prev.questions];
+      if (direction === 'up' && index > 0) {
+        const temp = newQuestions[index - 1];
+        newQuestions[index - 1] = newQuestions[index]!;
+        newQuestions[index] = temp!;
+      } else if (direction === 'down' && index < newQuestions.length - 1) {
+        const temp = newQuestions[index + 1];
+        newQuestions[index + 1] = newQuestions[index]!;
+        newQuestions[index] = temp!;
+      }
+      return { ...prev, questions: newQuestions };
+    });
+  };
+
+  const addOption = (questionIndex: number) => {
+    setFormValues(prev => {
+      const newQuestions = [...prev.questions];
+      const q = newQuestions[questionIndex]!;
+      q.options = [...(q.options || []), `Option ${(q.options?.length || 0) + 1}`];
+      newQuestions[questionIndex] = q;
+      return { ...prev, questions: newQuestions };
+    });
+  };
+
+  const updateOption = (questionIndex: number, optionIndex: number, value: string) => {
+    setFormValues(prev => {
+      const newQuestions = [...prev.questions];
+      const q = newQuestions[questionIndex]!;
+      const newOptions = [...(q.options || [])];
+      newOptions[optionIndex] = value;
+      q.options = newOptions;
+      newQuestions[questionIndex] = q;
+      return { ...prev, questions: newQuestions };
+    });
+  };
+
+  const removeOption = (questionIndex: number, optionIndex: number) => {
+    setFormValues(prev => {
+      const newQuestions = [...prev.questions];
+      const q = newQuestions[questionIndex]!;
+      const newOptions = [...(q.options || [])];
+      newOptions.splice(optionIndex, 1);
+      q.options = newOptions;
+      newQuestions[questionIndex] = q;
+      return { ...prev, questions: newQuestions };
+    });
   };
 
   /* Save */
@@ -187,6 +276,18 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
       setErrors(validationErrors);
       return;
     }
+    
+    // validate questions
+    for (const q of formValues.questions) {
+      if (!q.question.trim()) {
+        toast.error('All questions must have a title.');
+        return;
+      }
+      if (q.type === 'MULTIPLE_CHOICE' && (!q.options || q.options.length === 0)) {
+        toast.error('Multiple choice questions must have at least one option.');
+        return;
+      }
+    }
 
     setIsSaving(true);
 
@@ -195,6 +296,11 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
       description: formValues.description.trim(),
       is_open: formValues.is_open,
       category_id: formValues.category_id || null,
+      questions: formValues.questions.map((q, i) => ({
+        ...q,
+        id: q.id?.length === 13 && !isNaN(Number(q.id)) ? undefined : q.id, // strip temp frontend id if needed
+        order: i,
+      })),
     };
 
     try {
@@ -237,15 +343,109 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
             />
           </div>
           <div className="md:col-span-2">
-            <TextArea
-              label="Description"
-              value={formValues.description}
-              placeholder="e.g. Develop and maintain backend services..."
-              onChange={handleTextAreaChange('description')}
-              id="description"
-              error={errors.description}
+            <label className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              Description
+            </label>
+            <div className={`react-quill-wrapper ${isDark ? 'dark-mode-quill' : ''}`}>
+              <ReactQuill
+                theme="snow"
+                value={formValues.description}
+                onChange={handleDescriptionChange}
+                style={{ backgroundColor: isDark ? '#374151' : '#fff', color: isDark ? '#fff' : '#000', borderRadius: '8px' }}
+              />
+            </div>
+            {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+          </div>
+        </div>
+
+        {/* Form Builder Section */}
+        <div className={`p-4 rounded-xl border ${isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50'}`}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Form Builder</h3>
+            <Button
+              buttonText="Add Question"
+              onClick={addQuestion}
+              type="basic"
+              width="fit"
               darkMode={isDark}
             />
+          </div>
+          
+          <div className="space-y-4">
+            {formValues.questions.map((q, index) => (
+              <div key={q.id || index} className={`p-4 rounded-lg border ${isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-white'}`}>
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1">
+                    <InputField
+                      label={`Question ${index + 1}`}
+                      value={q.question}
+                      onChange={(e) => updateQuestion(index, 'question', e.target.value)}
+                      placeholder="Enter question text..."
+                      darkMode={isDark}
+                      id={`q-${index}`}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 pt-7">
+                    <button onClick={() => moveQuestion(index, 'up')} disabled={index === 0} className={`p-1.5 rounded hover:bg-gray-200 disabled:opacity-50 ${isDark ? 'hover:bg-gray-600 text-gray-300' : 'text-gray-600'}`}><FiArrowUp /></button>
+                    <button onClick={() => moveQuestion(index, 'down')} disabled={index === formValues.questions.length - 1} className={`p-1.5 rounded hover:bg-gray-200 disabled:opacity-50 ${isDark ? 'hover:bg-gray-600 text-gray-300' : 'text-gray-600'}`}><FiArrowDown /></button>
+                    <button onClick={() => removeQuestion(index)} className="p-1.5 rounded hover:bg-red-100 text-red-500"><FiTrash2 /></button>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap items-end gap-4">
+                  <div className="w-48">
+                    <Select
+                      id={`type-${index}`}
+                      label="Type"
+                      value={q.type}
+                      onChange={(e) => updateQuestion(index, 'type', e.target.value)}
+                      options={[
+                        { label: 'Short Text', value: 'TEXT' },
+                        { label: 'Long Text', value: 'LONG_TEXT' },
+                        { label: 'Multiple Choice', value: 'MULTIPLE_CHOICE' },
+                        { label: 'File Upload', value: 'FILE' },
+                      ]}
+                      darkMode={isDark}
+                    />
+                  </div>
+                  <div className="pb-1">
+                    <Toggle
+                      checked={q.is_required}
+                      onChange={(val) => updateQuestion(index, 'is_required', val)}
+                      labelOn="Required"
+                      labelOff="Optional"
+                      darkMode={isDark}
+                    />
+                  </div>
+                </div>
+
+                {q.type === 'MULTIPLE_CHOICE' && (
+                  <div className="mt-4 space-y-2 pl-4 border-l-2 border-gray-300 dark:border-gray-500">
+                    {q.options?.map((opt, optIndex) => (
+                      <div key={optIndex} className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={opt}
+                          onChange={(e) => updateOption(index, optIndex, e.target.value)}
+                          className={`flex-1 p-2 text-sm rounded border focus:outline-none focus:ring-2 focus:ring-primary ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}`}
+                          placeholder={`Option ${optIndex + 1}`}
+                        />
+                        <button onClick={() => removeOption(index, optIndex)} className="p-1.5 text-red-500 hover:bg-red-100 rounded">
+                          <FiX />
+                        </button>
+                      </div>
+                    ))}
+                    <button onClick={() => addOption(index)} className={`text-sm flex items-center gap-1 mt-2 ${isDark ? 'text-primary-light hover:text-primary' : 'text-primary hover:text-primary-dark'}`}>
+                      <FiPlus /> Add Option
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+            
+            {formValues.questions.length === 0 && (
+              <p className={`text-center py-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No questions added yet. Click "Add Question" to start building your form.</p>
+            )}
           </div>
         </div>
 
