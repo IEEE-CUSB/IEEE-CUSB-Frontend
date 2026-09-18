@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { InputField, Button, Modal, Select } from '@ieee-ui/ui';
 import { useTheme } from '@/shared/hooks/useTheme';
-import { FiUpload, FiTrash2, FiImage, FiX, FiPlus, } from 'react-icons/fi';
+import {  FiUpload, FiTrash2, FiImage, FiX, FiPlus, FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { Toggle } from '@/shared/components/ui/Toggle';
 import ReactQuill from 'react-quill-new';
@@ -216,6 +216,22 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
       questions: prev.questions.filter((_, i) => i !== index),
     }));
   };
+  const moveQuestion = (index: number, direction: 'up' | 'down') => {
+    setFormValues(prev => {
+      const newQuestions = [...prev.questions];
+      if (direction === 'up' && index > 0) {
+        const temp = newQuestions[index - 1];
+        newQuestions[index - 1] = newQuestions[index]!;
+        newQuestions[index] = temp!;
+      } else if (direction === 'down' && index < newQuestions.length - 1) {
+        const temp = newQuestions[index + 1];
+        newQuestions[index + 1] = newQuestions[index]!;
+        newQuestions[index] = temp!;
+      }
+      return { ...prev, questions: newQuestions };
+    });
+  };
+
 
 
 
@@ -363,12 +379,30 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
                       id={`q-${index}`}
                     />
                   </div>
-                  <button type="button"
-                    onClick={() => removeQuestion(index)}
-                    className="mt-8 p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
-                  >
-                    <FiTrash2 className="w-5 h-5" />
-                  </button>
+                  <div className="mt-8 flex flex-col gap-1">
+                    <div className="flex gap-1">
+                      <button type="button"
+                        onClick={() => moveQuestion(index, 'up')}
+                        disabled={index === 0}
+                        className="p-1.5 text-gray-500 hover:bg-gray-100 rounded transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <FiArrowUp className="w-4 h-4" />
+                      </button>
+                      <button type="button"
+                        onClick={() => moveQuestion(index, 'down')}
+                        disabled={index === formValues.questions.length - 1}
+                        className="p-1.5 text-gray-500 hover:bg-gray-100 rounded transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <FiArrowDown className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <button type="button"
+                      onClick={() => removeQuestion(index)}
+                      className="p-1.5 text-red-500 hover:bg-red-100 rounded transition-colors flex justify-center"
+                    >
+                      <FiTrash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="flex gap-4 items-center">
@@ -400,7 +434,18 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
 
                 {q.type === 'MULTIPLE_CHOICE' && (
                   <div className={`mt-4 p-3 rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
-                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Options</label>
+                    <div className="flex items-center justify-between mb-3">
+                      <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Options</label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={q.allow_multiple_selection || false}
+                          onChange={(e) => updateQuestion(index, 'allow_multiple_selection', e.target.checked)}
+                          className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary"
+                        />
+                        <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Allow Multiple Selection</span>
+                      </label>
+                    </div>
                     {q.options?.map((opt, optIndex) => (
                       <div key={optIndex} className="flex items-center gap-2 mb-2">
                         <div className="flex-1">

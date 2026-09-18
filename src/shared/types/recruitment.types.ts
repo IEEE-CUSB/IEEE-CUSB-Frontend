@@ -27,6 +27,7 @@ export interface Question {
   is_required: boolean;
   options?: string[];
   order?: number;
+  allow_multiple_selection?: boolean;
 }
 
 export interface Vacancy {

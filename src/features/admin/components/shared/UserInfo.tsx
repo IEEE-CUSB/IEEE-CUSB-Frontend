@@ -297,7 +297,7 @@ export default function UserInfo({
                                   <span className="line-clamp-1">View / Download File</span>
                                 </button>
                               ) : (
-                                <p className="text-sm leading-6 text-muted-foreground">{String(answer)}</p>
+                                <p className="text-sm leading-6 text-muted-foreground">{Array.isArray(answer) ? answer.join(", ") : String(answer)}</p>
                               )}
                             </div>
                           ))}

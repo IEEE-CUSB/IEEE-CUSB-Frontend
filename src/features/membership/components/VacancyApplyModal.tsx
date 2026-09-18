@@ -24,14 +24,14 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
   const isAdmin = user?.role?.name === RoleName.ADMIN || user?.role?.name === RoleName.SUPER_ADMIN;
   const applyMutation = useApplyToVacancy();
 
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, any>>({});
   const [files, setFiles] = useState<Record<string, File>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasCv = user?.cv_file_key || user?.cv_url;
 
-  const handleInputChange = (questionId: string, value: string) => {
+  const handleInputChange = (questionId: string, value: any) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
     if (errors[questionId]) {
       setErrors((prev) => ({ ...prev, [questionId]: '' }));
@@ -66,7 +66,7 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
         if (q.type === 'FILE') {
           if (!files[id]) newErrors[id] = 'This file is required.';
         } else {
-          if (!answers[id] || !answers[id].trim()) newErrors[id] = 'This field is required.';
+          if (!answers[id] || (typeof answers[id] === 'string' && !answers[id].trim()) || (Array.isArray(answers[id]) && answers[id].length === 0)) newErrors[id] = 'This field is required.';
         }
       }
     });
@@ -188,18 +188,50 @@ export const VacancyApplyModal = ({ isOpen, onClose, vacancy, hasApplied }: Vaca
                     />
                   )}
                   {q.type === 'MULTIPLE_CHOICE' && (
-                    <Select
-                      id={`q-${qId}`}
-                      label={`${q.question_text}${q.is_required ? ' *' : ''}`}
-                      value={answers[qId] || ''}
-                      onChange={(e) => handleInputChange(qId, e.target.value)}
-                      options={[
-                        { label: 'Select an option...', value: '' },
-                        ...(q.options?.map((opt) => ({ label: opt, value: opt })) || []),
-                      ]}
-                      error={errors[qId]}
-                      darkMode={isDark}
-                    />
+                    <div className="mb-4">
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {q.question_text}{q.is_required && ' *'}
+                      </label>
+                      {q.allow_multiple_selection ? (
+                        <div className="space-y-2">
+                          {q.options?.map((opt, i) => {
+                            const isChecked = Array.isArray(answers[qId]) && answers[qId].includes(opt);
+                            return (
+                              <label key={i} className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={(e) => {
+                                    const current = Array.isArray(answers[qId]) ? answers[qId] : [];
+                                    if (e.target.checked) {
+                                      handleInputChange(qId, [...current, opt]);
+                                    } else {
+                                      handleInputChange(qId, current.filter((v: string) => v !== opt));
+                                    }
+                                  }}
+                                  className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary"
+                                />
+                                <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{opt}</span>
+                              </label>
+                            );
+                          })}
+                          {errors[qId] && <p className="text-red-500 text-xs mt-1">{errors[qId]}</p>}
+                        </div>
+                      ) : (
+                        <Select
+                          id={`q-${qId}`}
+                          label=""
+                          value={answers[qId] || ''}
+                          onChange={(e) => handleInputChange(qId, e.target.value)}
+                          options={[
+                            { label: 'Select an option...', value: '' },
+                            ...(q.options?.map((opt) => ({ label: opt, value: opt })) || []),
+                          ]}
+                          error={errors[qId]}
+                          darkMode={isDark}
+                        />
+                      )}
+                    </div>
                   )}
                   {q.type === 'FILE' && (
                     <div>
