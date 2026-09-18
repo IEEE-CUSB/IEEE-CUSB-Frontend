@@ -13,8 +13,8 @@ export const EventsPage = () => {
   return (
     <div className="bg-background">
       <PageHeroSection
-        eyebrow="Events • Workshops • Networking"
-        title="Events & Workshops"
+        eyebrow="Events • Networking"
+        title="Events"
         description="Discover our latest technical sessions, social gatherings, and hands-on workshops designed to empower future engineers. Join us for unforgettable experiences that shape your career."
       />
       <EventsListSection />
