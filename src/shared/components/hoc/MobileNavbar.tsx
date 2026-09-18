@@ -138,6 +138,18 @@ export const MobileNavbar = () => {
                     <FiUser className="w-6 h-6 mb-2 text-primary" />
                     <span className="text-sm font-medium">My Profile</span>
                   </Link>
+                  <Link
+                    to="/join"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex flex-col items-center justify-center p-4 rounded-xl transition-colors ${
+                      isDark
+                        ? 'bg-gray-800 hover:bg-gray-700'
+                        : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                  >
+                    <FaUsers className="w-6 h-6 mb-2 text-primary" />
+                    <span className="text-sm font-medium">Join Us</span>
+                  </Link>
                   {isAdmin && (
                     <Link
                       to="/admin"
