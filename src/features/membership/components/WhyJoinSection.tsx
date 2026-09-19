@@ -19,6 +19,8 @@ const FeatureItem = ({ icon, title, description }: FeatureItemProps) => (
   </div>
 );
 
+import joinUsImage from '../../../assets/join_us.png';
+
 export const WhyJoinSection = () => {
   const features = [
     {
@@ -61,12 +63,8 @@ export const WhyJoinSection = () => {
             </div>
           </SectionReveal>
           <SectionReveal delay={0.2}>
-            <div className="rounded-3xl overflow-hidden shadow-2xl bg-primary/5 flex items-center justify-center h-full min-h-[400px]">
-              {/* Optional illustration or image could go here */}
-              <div className="text-center p-8">
-                <FaUsers className="w-32 h-32 text-primary/20 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-foreground/50">Become Part of the Future</h3>
-              </div>
+            <div className="rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center h-full min-h-[400px]">
+              <img src={joinUsImage} alt="IEEE CUSB Community" className="w-full h-full object-cover" />
             </div>
           </SectionReveal>
         </div>
