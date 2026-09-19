@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { HiBriefcase, HiChevronRight } from 'react-icons/hi';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { Vacancy } from '@/shared/types/recruitment.types';
+import { useNavigate } from 'react-router-dom';
 
 const CATEGORY_COLORS: Record<string, string> = {
   Technical: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
@@ -20,6 +21,7 @@ interface VacancyCardProps {
 }
 
 export const VacancyCard = ({ vacancy, onApply, hasApplied }: VacancyCardProps) => {
+  const navigate = useNavigate();
   const { isDark } = useTheme();
   const categoryName = vacancy.category?.name || 'Other';
   const categoryColor = CATEGORY_COLORS[categoryName] ?? CATEGORY_COLORS.Other;
@@ -30,7 +32,8 @@ export const VacancyCard = ({ vacancy, onApply, hasApplied }: VacancyCardProps) 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className={`relative flex flex-col rounded-2xl overflow-hidden border transition-all duration-300 ${
+      onClick={() => navigate(`/recruitment/vacancies/${vacancy.id}`)}
+      className={`cursor-pointer relative flex flex-col rounded-2xl overflow-hidden border transition-all duration-300 ${
         isDark
           ? 'bg-gray-800 border-gray-700 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10'
           : 'bg-white border-gray-200 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5'
@@ -88,7 +91,7 @@ export const VacancyCard = ({ vacancy, onApply, hasApplied }: VacancyCardProps) 
             </span>
           ) : (
             <button
-              onClick={() => onApply(vacancy)}
+              onClick={(e) => { e.stopPropagation(); onApply(vacancy); }}
               className="flex items-center gap-1.5 bg-primary text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-primary/90 active:scale-95 transition-all duration-200 shadow-sm shadow-primary/30"
             >
               Apply Now

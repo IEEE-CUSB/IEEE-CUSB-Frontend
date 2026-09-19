@@ -211,3 +211,8 @@ export const uploadApplicationFile = async (file: File): Promise<{ url: string }
   );
   return response.data.data;
 };
+
+export const getVacancyById = async (id: string): Promise<Vacancy> => {
+  const response = await apiClient.get<ApiResponse<Vacancy>>(`/recruitment/vacancies/${id}`);
+  return response.data.data;
+};

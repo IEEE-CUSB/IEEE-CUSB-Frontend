@@ -13,6 +13,7 @@ import {
   CommitteesPage,
   AwardsPage,
   MembershipPage,
+  VacancyDetailsPage,
 } from './pages';
 import EventsPage from './pages/EventsPage';
 import { AdminLayout } from '../features/admin/layouts/AdminLayout';
@@ -120,6 +121,10 @@ const routes: RouteObject[] = [
       {
         path: 'join',
         element: <MembershipPage />,
+      },
+      {
+        path: 'recruitment/vacancies/:id',
+        element: <VacancyDetailsPage />,
       },
       {
         path: 'profile',

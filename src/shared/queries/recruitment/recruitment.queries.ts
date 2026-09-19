@@ -242,3 +242,11 @@ export const useDeleteVacancyImage = () => {
     },
   });
 };
+
+export const useVacancyById = (id: string) => {
+  return useQuery({
+    queryKey: ['vacancy', id],
+    queryFn: () => getVacancyById(id),
+    enabled: !!id,
+  });
+};

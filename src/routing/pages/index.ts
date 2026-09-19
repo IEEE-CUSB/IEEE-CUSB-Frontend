@@ -9,3 +9,4 @@ export { CommitteesPage } from './CommitteesPage';
 export { AwardsPage } from './AwardsPage';
 export { MembershipPage } from './MembershipPage';
 export { WorkshopsPage } from './WorkshopsPage';
+export { VacancyDetailsPage } from './VacancyDetailsPage';
