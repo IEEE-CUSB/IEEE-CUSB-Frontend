@@ -97,7 +97,7 @@ export const TrophyRow = ({
             <img
               src={award.image_url || trophy}
               alt={award.title}
-              className="w-24 h-32 sm:w-32 sm:h-40 md:w-36 md:h-44 lg:w-40 lg:h-48 object-contain scale-[1.6] sm:scale-[1.7] md:scale-[1.8] origin-bottom translate-y-8 sm:translate-y-10 md:translate-y-12"
+              className="w-24 h-32 sm:w-32 sm:h-40 md:w-36 md:h-44 lg:w-40 lg:h-48 object-contain scale-[1.6] sm:scale-[1.7] md:scale-[1.8] origin-bottom translate-y-12 sm:translate-y-16 md:translate-y-20"
             />
             {award.won_count > 0 ? (
               <div
