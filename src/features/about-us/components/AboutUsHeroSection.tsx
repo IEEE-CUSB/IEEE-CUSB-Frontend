@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { PageHeroSection } from '@/shared/components/PageHeroSection';
+import ieeeBuildingImage from '../../../assets/about/ieee_building.jpg';
 
 interface AboutUsHeroSectionProps {
   darkMode?: boolean;
@@ -21,7 +22,7 @@ export const AboutUsHeroSection = ({ darkMode }: AboutUsHeroSectionProps) => {
         {/* Image */}
         <div className="aspect-[4/3] relative">
           <img
-            src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80"
+            src={ieeeBuildingImage}
             alt="IEEE CUSB Excellence"
             className="w-full h-full object-cover"
           />
