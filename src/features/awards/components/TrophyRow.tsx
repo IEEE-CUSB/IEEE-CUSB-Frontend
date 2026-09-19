@@ -11,10 +11,12 @@ export const TrophyRow = ({
   award,
   index,
   darkMode,
+  onClick
 }: {
   award: Award;
   index: number;
   darkMode: boolean;
+  onClick?: () => void;
 }) => {
   const isEven = index % 2 === 0;
   const cardRef = useRef<HTMLDivElement>(null);
@@ -80,7 +82,7 @@ export const TrophyRow = ({
   }, [isEven]);
 
   return (
-    <div ref={cardRef}>
+    <div ref={cardRef} onClick={onClick} className={onClick ? 'cursor-pointer' : ''}>
       <div
         className={`flex flex-col items-center gap-8 pt-4 sm:pt-6 md:pt-8 ${
           isEven ? 'md:flex-row' : 'md:flex-row-reverse'

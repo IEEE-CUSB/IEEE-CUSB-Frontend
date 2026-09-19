@@ -13,7 +13,7 @@ function TrophyCard({ award, darkMode }: { award: Award; darkMode: boolean }) {
       <motion.div
         whileHover={{ scale: 1.1, y: -15 }}
         transition={{ duration: 0.3 }}
-        className="flex flex-col items-center w-full"
+        className="flex flex-col items-center w-full cursor-pointer"
       >
         {/* Trophy Image */}
         <div className={`relative flex justify-end items-end rounded-lg`}>

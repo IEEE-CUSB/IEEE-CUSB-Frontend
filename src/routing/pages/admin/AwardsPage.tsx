@@ -6,7 +6,7 @@ import { type ColumnDef } from '@ieee-ui/ui';
 import { AdminMobileCard } from '@/shared/components/AdminMobileCard';
 import { DataTable } from '@ieee-ui/ui';
 import AddEditAwardModal from '@/features/admin/components/awardAdminPanel/AddEditAwardModal';
-import AwardDetailModal from '@/features/admin/components/awardAdminPanel/AwardDetailModal';
+import AwardDetailModal from '@/features/awards/components/AwardDetailModal';
 import { ConfirmDeleteModal } from '@/shared/components/ConfirmDeleteModal';
 import {
   useAwards,

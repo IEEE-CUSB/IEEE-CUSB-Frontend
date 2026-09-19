@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAwards } from '@/shared/queries/awards/awards.queries';
 import TrophyCard from './TrophyCard';
@@ -8,6 +9,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi2';
 import { NavLink } from 'react-router-dom';
+import AwardDetailModal from '@/features/awards/components/AwardDetailModal';
+import type { Award } from '@/shared/types/award.types';
+
 interface TrophiesAwardsSectionProps {
   darkMode?: boolean;
 }
@@ -17,6 +21,7 @@ export const TrophiesAwardsSection = ({
 }: TrophiesAwardsSectionProps) => {
   const { data: awardsData, isLoading, isError } = useAwards();
   const awards = awardsData?.awards || [];
+  const [selectedAward, setSelectedAward] = useState<Award | null>(null);
 
   return (
     <section
@@ -121,7 +126,7 @@ export const TrophiesAwardsSection = ({
               className="!py-8 !px-2 sm:!py-10 sm:!px-5 md:!py-11 md:!px-8 lg:!py-14 lg:!px-10"
             >
               {awards.map((item) => (
-                <SwiperSlide key={item.id} style={{ overflow: 'visible' }}>
+                <SwiperSlide key={item.id} style={{ overflow: 'visible' }} onClick={() => setSelectedAward(item)}>
                   <TrophyCard award={item} darkMode={darkMode ?? false} />
                 </SwiperSlide>
               ))}
@@ -132,6 +137,8 @@ export const TrophiesAwardsSection = ({
           </motion.div>
         </div>
       </div>
+      
+      <AwardDetailModal award={selectedAward} onClose={() => setSelectedAward(null)} />
     </section>
   );
 };

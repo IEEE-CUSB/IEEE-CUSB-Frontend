@@ -1,13 +1,17 @@
+import { useState } from 'react';
 import { useAwards } from '@/shared/queries/awards/awards.queries';
 import TrophyRow from '@/features/awards/components/TrophyRow';
 import { PageHeroSection } from '@/shared/components/PageHeroSection';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { AwardSparkles } from '../../features/awards/components/AwardSparkles';
+import AwardDetailModal from '@/features/awards/components/AwardDetailModal';
+import type { Award } from '@/shared/types/award.types';
 
 export const AwardsPage = () => {
   const { isDark } = useTheme();
   const { data: awardsData, isLoading, isError } = useAwards();
   const awards = awardsData?.awards || [];
+  const [selectedAward, setSelectedAward] = useState<Award | null>(null);
 
   return (
     <>
@@ -39,11 +43,13 @@ export const AwardsPage = () => {
             </div>
           ) : (
             awards.map((award, i) => (
-              <TrophyRow key={award.id} award={award} index={i} darkMode={isDark} />
+              <TrophyRow key={award.id} award={award} index={i} darkMode={isDark} onClick={() => setSelectedAward(award)} />
             ))
           )}
         </div>
       </section>
+
+      <AwardDetailModal award={selectedAward} onClose={() => setSelectedAward(null)} />
     </>
   );
 };
