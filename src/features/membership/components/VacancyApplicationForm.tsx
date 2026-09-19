@@ -90,9 +90,9 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
 
   if (!isAuthenticated) {
     return (
-      <div className={`text-center p-8 rounded-xl border \${isDark ? 'border-gray-700 bg-gray-900/50' : 'border-gray-200 bg-gray-50'}`}>
-        <h4 className={`text-base font-semibold mb-2 \${isDark ? 'text-white' : 'text-gray-900'}`}>Sign in to Apply</h4>
-        <p className={`text-sm mb-4 \${isDark ? 'text-gray-400' : 'text-gray-500'}`}>You must be logged in to apply for vacancies.</p>
+      <div className={`text-center p-8 rounded-xl border ${isDark ? 'border-gray-700 bg-gray-900/50' : 'border-gray-200 bg-gray-50'}`}>
+        <h4 className={`text-base font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Sign in to Apply</h4>
+        <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>You must be logged in to apply for vacancies.</p>
         <Button buttonText="Login / Register" onClick={() => navigate('/login')} type="primary" darkMode={isDark} />
       </div>
     );
@@ -100,17 +100,17 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
 
   if (isAdmin) {
     return (
-      <div className={`text-center p-6 rounded-xl border \${isDark ? 'border-gray-700 bg-gray-900/50' : 'border-gray-200 bg-gray-50'}`}>
-        <p className={`text-sm \${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Admins cannot apply to vacancies.</p>
+      <div className={`text-center p-6 rounded-xl border ${isDark ? 'border-gray-700 bg-gray-900/50' : 'border-gray-200 bg-gray-50'}`}>
+        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Admins cannot apply to vacancies.</p>
       </div>
     );
   }
 
   if (!hasCv) {
     return (
-      <div className={`text-center p-8 rounded-xl border \${isDark ? 'border-gray-700 bg-gray-900/50' : 'border-gray-200 bg-gray-50'}`}>
-        <h4 className={`text-base font-semibold mb-2 \${isDark ? 'text-white' : 'text-gray-900'}`}>CV Required</h4>
-        <p className={`text-sm mb-4 \${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Please upload your CV in your Profile before applying.</p>
+      <div className={`text-center p-8 rounded-xl border ${isDark ? 'border-gray-700 bg-gray-900/50' : 'border-gray-200 bg-gray-50'}`}>
+        <h4 className={`text-base font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>CV Required</h4>
+        <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Please upload your CV in your Profile before applying.</p>
         <Button buttonText="Go to Profile" onClick={() => navigate('/profile')} type="primary" darkMode={isDark} />
       </div>
     );
@@ -118,8 +118,8 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
 
   if (hasApplied) {
     return (
-      <div className={`text-center p-6 rounded-xl border \${isDark ? 'border-green-900/40 bg-green-900/20' : 'border-green-200 bg-green-50'}`}>
-        <p className={`text-sm font-medium \${isDark ? 'text-green-300' : 'text-green-700'}`}>You have already applied to this position.</p>
+      <div className={`text-center p-6 rounded-xl border ${isDark ? 'border-green-900/40 bg-green-900/20' : 'border-green-200 bg-green-50'}`}>
+        <p className={`text-sm font-medium ${isDark ? 'text-green-300' : 'text-green-700'}`}>You have already applied to this position.</p>
       </div>
     );
   }
@@ -132,8 +132,8 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
           <div key={qId} className="space-y-1">
             {q.type === 'TEXT' && (
               <InputField
-                id={`q-\${qId}`}
-                label={`\${q.question_text}\${q.is_required ? ' *' : ''}`}
+                id={`q-${qId}`}
+                label={`${q.question_text}${q.is_required ? ' *' : ''}`}
                 value={answers[qId] || ''}
                 onChange={(e: any) => handleInputChange(qId, e.target.value)}
                 error={errors[qId]}
@@ -142,8 +142,8 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
             )}
             {q.type === 'LONG_TEXT' && (
               <TextArea
-                id={`q-\${qId}`}
-                label={`\${q.question_text}\${q.is_required ? ' *' : ''}`}
+                id={`q-${qId}`}
+                label={`${q.question_text}${q.is_required ? ' *' : ''}`}
                 value={answers[qId] || ''}
                 onChange={(e: any) => handleInputChange(qId, e.target.value)}
                 error={errors[qId]}
@@ -152,7 +152,7 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
             )}
             {q.type === 'MULTIPLE_CHOICE' && (
               <div className="mb-4">
-                <label className={`block text-sm font-medium mb-2 \${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                   {q.question_text}{q.is_required && ' *'}
                 </label>
                 {q.allow_multiple_selection ? (
@@ -174,7 +174,7 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
                             }}
                             className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary"
                           />
-                          <span className={`text-sm \${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{opt}</span>
+                          <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{opt}</span>
                         </label>
                       );
                     })}
@@ -182,7 +182,7 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
                   </div>
                 ) : (
                   <Select
-                    id={`q-\${qId}`}
+                    id={`q-${qId}`}
                     label=""
                     value={answers[qId] || ''}
                     onChange={(e) => handleInputChange(qId, e.target.value)}
@@ -198,13 +198,13 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
             )}
             {q.type === 'FILE' && (
               <div>
-                <label className={`block text-sm font-medium mb-1.5 \${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                   {q.question_text}{q.is_required && ' *'}
                 </label>
                 <input
                   type="file"
                   onChange={(e) => handleFileChange(qId, e)}
-                  className={`block w-full text-sm \${isDark ? 'text-gray-300 file:bg-gray-700 file:text-gray-300' : 'text-gray-500 file:bg-gray-100 file:text-gray-700'} file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold hover:file:bg-opacity-80 transition-colors cursor-pointer`}
+                  className={`block w-full text-sm ${isDark ? 'text-gray-300 file:bg-gray-700 file:text-gray-300' : 'text-gray-500 file:bg-gray-100 file:text-gray-700'} file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold hover:file:bg-opacity-80 transition-colors cursor-pointer`}
                 />
                 {errors[qId] && <p className="text-red-500 text-xs mt-1">{errors[qId]}</p>}
               </div>
@@ -214,7 +214,7 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
       })}
       
       {(!vacancy.questions || vacancy.questions.length === 0) && (
-         <p className={`text-sm \${isDark ? 'text-gray-400' : 'text-gray-500'} py-4`}>
+         <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} py-4`}>
            No questions to answer. Click submit to apply with your CV.
          </p>
       )}
