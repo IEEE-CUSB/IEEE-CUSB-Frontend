@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { HiMail } from 'react-icons/hi';
 import { IoLogoLinkedin } from 'react-icons/io5';
+import raniaOsamaImage from '../../../assets/team/Rania_Osama.png';
 
 interface CounselorSectionProps {
   darkMode?: boolean;
@@ -11,8 +12,7 @@ const COUNSELOR = {
   role: 'Branch Counselor',
   email: 'rania.osama@eng.cu.edu.eg',
   linkedin: 'https://www.linkedin.com/in/rania-osama-84290043/',
-  image:
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+  image: raniaOsamaImage,
 };
 
 export const CounselorSection = ({ darkMode }: CounselorSectionProps) => {
