@@ -13,7 +13,7 @@ export const TROPHY_AWARDS: Award[] = [
     description:
       'Ranked for exceptional performance in organizing technical events and member engagement across Egypt, Middle East, and Africa.',
     won_count: 2,
-    year: 2019,
+    years: [2019],
     source: AwardSource.EGYPT_SECTION,
     created_at: '2019-01-01T00:00:00Z',
     updated_at: '2019-01-01T00:00:00Z',
@@ -25,7 +25,7 @@ export const TROPHY_AWARDS: Award[] = [
     description:
       'Recognized for outstanding website design, content accessibility, and user experience among all IEEE student branches worldwide.',
     won_count: 3,
-    year: 2021,
+    years: [2021],
     source: AwardSource.GLOBAL,
     created_at: '2021-01-01T00:00:00Z',
     updated_at: '2021-01-01T00:00:00Z',
@@ -37,7 +37,7 @@ export const TROPHY_AWARDS: Award[] = [
     description:
       'Honoring the collective effort of our volunteers in community service and STEM outreach programs at local schools.',
     won_count: 0,
-    year: 2020,
+    years: [2020],
     source: AwardSource.REGION_8,
     created_at: '2020-01-01T00:00:00Z',
     updated_at: '2020-01-01T00:00:00Z',
@@ -49,7 +49,7 @@ export const TROPHY_AWARDS: Award[] = [
     description:
       'Achieved the highest percentage increase in student membership within the Egypt Section for the fiscal year.',
     won_count: 1,
-    year: 2018,
+    years: [2018],
     source: AwardSource.EGYPT_SECTION,
     created_at: '2018-01-01T00:00:00Z',
     updated_at: '2018-01-01T00:00:00Z',
@@ -61,7 +61,7 @@ export const TROPHY_AWARDS: Award[] = [
     description:
       'Our coding teams ranked within the top 100 globally out of 4500+ teams in the 24-hour programming challenge.',
     won_count: 0,
-    year: 2021,
+    years: [2021],
     source: AwardSource.GLOBAL,
     created_at: '2021-01-01T00:00:00Z',
     updated_at: '2021-01-01T00:00:00Z',

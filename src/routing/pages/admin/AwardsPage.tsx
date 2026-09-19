@@ -153,7 +153,7 @@ export const AwardsPage = () => {
                   : 'bg-gray-50 border-gray-200 text-gray-700'
               }`}
             >
-              {AWARD_SOURCE_LABELS[item.source]} • {item.year}
+              {AWARD_SOURCE_LABELS[item.source]} • {item.years && item.years.length > 0 ? item.years.join(', ') : 'Unknown'}
             </span>
           </div>
         ),

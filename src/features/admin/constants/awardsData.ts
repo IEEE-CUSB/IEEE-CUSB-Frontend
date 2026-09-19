@@ -10,7 +10,7 @@ export const MOCK_AWARDS: Award[] = [
     description:
       'Awarded for developing an outstanding AI-powered solution that solved a real-world problem during the annual IEEE hackathon.',
     won_count: 1,
-    year: 2024,
+    years: [2024],
     source: AwardSource.EGYPT_SECTION,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
@@ -22,7 +22,7 @@ export const MOCK_AWARDS: Award[] = [
     description:
       'Recognized for exceptional leadership skills in guiding the Computer Society student branch to new heights throughout the academic year.',
     won_count: 1,
-    year: 2024,
+    years: [2024],
     source: AwardSource.EGYPT_SECTION,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',

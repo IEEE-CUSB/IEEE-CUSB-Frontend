@@ -147,7 +147,11 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
   const updateDetail = (index: number, field: 'year' | 'text', value: string) => {
     setFormValues(prev => {
       const newDetails = [...prev.details];
-      newDetails[index] = { ...newDetails[index], [field]: value };
+      const oldDetail = newDetails[index];
+      newDetails[index] = { 
+        year: field === 'year' ? value : (oldDetail?.year || ''), 
+        text: field === 'text' ? value : (oldDetail?.text || '') 
+      };
       return { ...prev, details: newDetails };
     });
     if (errors.details) setErrors(prev => ({ ...prev, details: undefined }));
