@@ -26,6 +26,7 @@ const emptyForm = (): AwardFormValues => ({
   description: '',
   won_count: '',
   years: String(new Date().getFullYear()),
+  details: '{}',
   source: AwardSource.EGYPT_SECTION,
 });
 
@@ -36,6 +37,7 @@ const awardToForm = (award?: Award): AwardFormValues => {
     description: award.description,
     won_count: String(award.won_count ?? 0),
     years: award.years ? award.years.join(', ') : String(new Date().getFullYear()),
+    details: award.details ? JSON.stringify(award.details, null, 2) : '{}',
     source: award.source ?? AwardSource.EGYPT_SECTION,
   };
 };
@@ -67,6 +69,15 @@ const validate = (values: AwardFormValues): AwardFormErrors => {
     if (yearsArr.some(y => isNaN(y) || y < 1900 || y > 2100))
       errors.years = 'Enter valid years (comma separated, e.g. 2025, 2024).';
   }
+  
+  if (values.details.trim()) {
+    try {
+      JSON.parse(values.details);
+    } catch {
+      errors.details = 'Details must be a valid JSON object.';
+    }
+  }
+  
   return errors;
 };
 
@@ -118,10 +129,10 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
       if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
     };
 
-  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFormValues(prev => ({ ...prev, description: e.target.value }));
-    if (errors.description)
-      setErrors(prev => ({ ...prev, description: undefined }));
+  const handleTextAreaChange = (field: 'description' | 'details') => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormValues(prev => ({ ...prev, [field]: e.target.value }));
+    if (errors[field])
+      setErrors(prev => ({ ...prev, [field]: undefined }));
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,6 +175,7 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
       description: formValues.description.trim(),
       won_count: formValues.won_count !== '' ? Number(formValues.won_count) : 0,
       years: formValues.years.split(',').map(y => Number(y.trim())),
+      details: formValues.details.trim() ? JSON.parse(formValues.details) : undefined,
       source: formValues.source,
     };
 
@@ -291,10 +303,23 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
               label="Description"
               value={formValues.description}
               placeholder="Enter award description"
-              onChange={handleTextAreaChange}
+              onChange={handleTextAreaChange('description')}
               id="award-description"
               maxLength={1000}
               error={errors.description}
+              darkMode={isDark}
+            />
+          </div>
+
+          {/* Details */}
+          <div className="md:col-span-2">
+            <TextArea
+              label="Details (JSON)"
+              value={formValues.details}
+              placeholder='{ "2025": "1st place" }'
+              onChange={handleTextAreaChange('details')}
+              id="award-details"
+              error={errors.details as string | undefined}
               darkMode={isDark}
             />
           </div>

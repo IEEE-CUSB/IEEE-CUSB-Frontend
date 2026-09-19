@@ -91,10 +91,27 @@ const AwardDetailModal: React.FC<AwardDetailModalProps> = ({
 
           {/* Description */}
           <p
-            className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
+            className={`text-xs sm:text-sm leading-relaxed mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
           >
             {award.description}
           </p>
+
+          {/* Details */}
+          {award.details && Object.keys(award.details).length > 0 && (
+            <div className={`mt-4 p-4 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
+              <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+                Winning Details
+              </h3>
+              <ul className="space-y-1.5">
+                {Object.entries(award.details).map(([year, detail]) => (
+                  <li key={year} className={`text-xs sm:text-sm flex gap-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <span className={`font-medium ${isDark ? 'text-primary-light' : 'text-primary'}`}>{year}:</span>
+                    <span>{detail as string}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </Modal>
