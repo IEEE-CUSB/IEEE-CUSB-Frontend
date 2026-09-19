@@ -57,8 +57,7 @@ export const OrgChartView = ({
 
     const activeSection = sections.find((s) => s.name === expandedSection);
 
-    const safeBoardMember = (index: number, defaultRole: string) => {
-        const m = boardMembers[index];
+    const safeBoardMember = (m: any, defaultRole: string) => {
         const name = m?.name || 'Vacant';
         return {
             label: m?.role || defaultRole,
@@ -67,49 +66,50 @@ export const OrgChartView = ({
         };
     };
 
-    const chair = safeBoardMember(0, 'Chair');
-    const viceChair = safeBoardMember(1, 'Vice Chair');
-    const secretary = safeBoardMember(2, 'Secretary');
-    const treasurer = safeBoardMember(3, 'Treasurer');
-    const pr = safeBoardMember(4, 'PR & FR');
-    const oc = safeBoardMember(5, 'OC');
-
     const hasBoardMembers = boardMembers && boardMembers.length > 0;
+    
+    // Group board members into rows (first row has 2, subsequent rows have 2)
+    const boardRows = [];
+    if (hasBoardMembers) {
+        boardRows.push([boardMembers[0], boardMembers[1]].filter(Boolean));
+        for (let i = 2; i < boardMembers.length; i += 2) {
+            boardRows.push([boardMembers[i], boardMembers[i + 1]].filter(Boolean));
+        }
+    }
 
     return (
         <div className="max-w-6xl mx-auto px-6 py-16">
             {hasBoardMembers && (
                 <>
                     {/* ═══════════════ Level 1: Chair & Vice Chair ═══════════════ */}
-                    <motion.div className="flex justify-center" {...inView(0)}>
-                        <OrgNode
-                            label="Chair & Vice Chair"
-                            subtitle={`${chair.subtitle} & ${viceChair.subtitle}`}
-                            avatar={chair.avatar}
-                            highlighted
-                            size="lg"
-                        />
-                    </motion.div>
+                    {boardRows[0] && boardRows[0].length > 0 && (
+                        <motion.div className="flex justify-center" {...inView(0)}>
+                            <OrgNode
+                                label="Chair & Vice Chair"
+                                subtitle={boardRows[0].map(m => safeBoardMember(m, '').subtitle).join(' & ')}
+                                avatar={safeBoardMember(boardRows[0][0], '').avatar}
+                                highlighted
+                                size="lg"
+                            />
+                        </motion.div>
+                    )}
 
-                    {/* ↓ connector */}
-                    <Connector />
-
-                    {/* ═══════════════ Level 2: Secretary & Treasurer ═══════════════ */}
-                    <TwoNodeRow
-                        left={{ label: 'Secretary', subtitle: secretary.subtitle, avatar: secretary.avatar }}
-                        right={{ label: 'Treasurer', subtitle: treasurer.subtitle, avatar: treasurer.avatar }}
-                        delay={0.15}
-                    />
-
-                    {/* ↓ connector */}
-                    <Connector />
-
-                    {/* ═══════════════ Level 3: PR&FR and OC ═══════════════ */}
-                    <TwoNodeRow
-                        left={{ label: 'PR & FR', subtitle: pr.subtitle, avatar: pr.avatar }}
-                        right={{ label: 'OC', subtitle: oc.subtitle, avatar: oc.avatar }}
-                        delay={0.15}
-                    />
+                    {boardRows.slice(1).map((row, idx) => (
+                        <div key={`row-${idx}`}>
+                            <Connector />
+                            {row.length === 2 ? (
+                                <TwoNodeRow
+                                    left={safeBoardMember(row[0], '')}
+                                    right={safeBoardMember(row[1], '')}
+                                    delay={0.15 + (idx * 0.1)}
+                                />
+                            ) : (
+                                <motion.div className="flex justify-center" {...inView(0.15 + (idx * 0.1))}>
+                                    <OrgNode {...safeBoardMember(row[0], '')} size="md" />
+                                </motion.div>
+                            )}
+                        </div>
+                    ))}
 
                     {/* ↓ connector */}
                     <Connector height="h-12" />
