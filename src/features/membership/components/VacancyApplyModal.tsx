@@ -26,6 +26,7 @@ export const VacancyApplyModal = ({
       onClose={onClose}
       title={`Apply for ${vacancy.title}`}
       size="large"
+      darkMode={isDark}
     >
       <div className="space-y-6">
         <div className={`p-4 rounded-xl border ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
