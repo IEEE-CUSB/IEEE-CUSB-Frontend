@@ -20,7 +20,8 @@ export interface Award {
   title: string;
   description: string;
   won_count: number;
-  year: number;
+  years: number[];
+  details?: Record<string, string>;
   source: AwardSource;
   created_at: string;
   updated_at: string;
@@ -30,7 +31,8 @@ export interface CreateAwardRequest {
   title: string;
   description: string;
   won_count?: number;
-  year?: number;
+  years?: number[];
+  details?: Record<string, string>;
   source?: AwardSource;
 }
 
@@ -38,7 +40,8 @@ export interface UpdateAwardRequest {
   title?: string;
   description?: string;
   won_count?: number;
-  year?: number;
+  years?: number[];
+  details?: Record<string, string>;
   source?: AwardSource;
 }
 
@@ -46,7 +49,7 @@ export interface AwardFormValues {
   title: string;
   description: string;
   won_count: string;
-  year: string;
+  years: string;
   source: AwardSource;
 }
 

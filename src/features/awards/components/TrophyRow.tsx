@@ -143,7 +143,7 @@ export const TrophyRow = ({
               <div>
                 <div>{award.title}</div>
                 <div className="text-[10px] sm:text-xs md:text-sm font-semibold tracking-wide text-info uppercase mb-1.5 sm:mb-2 line-clamp-1">
-                  {AWARD_SOURCE_LABELS[award.source]} • {award.year}
+                  {AWARD_SOURCE_LABELS[award.source]} • {award.years && award.years.length > 0 ? award.years.join(', ') : 'Unknown'}
                 </div>
               </div>
               <img

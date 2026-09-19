@@ -241,7 +241,7 @@ export const AwardsPage = () => {
             isDark={isDark}
             title={award.title}
             subtitle={award.description}
-            badge={`${AWARD_SOURCE_LABELS[award.source]} • ${award.year}`}
+            badge={`${AWARD_SOURCE_LABELS[award.source]} • ${award.years && award.years.length > 0 ? award.years.join(', ') : 'Unknown'}`}
             avatar={
               <div
                 className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden ${isDark ? 'bg-yellow-900/30' : 'bg-yellow-50'}`}

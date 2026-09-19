@@ -79,7 +79,7 @@ const AwardDetailModal: React.FC<AwardDetailModalProps> = ({
               <span
                 className={`text-xs sm:text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}
               >
-                {award.year}
+                {award.years && award.years.length > 0 ? award.years.join(', ') : 'Unknown'}
               </span>
             </div>
           </div>

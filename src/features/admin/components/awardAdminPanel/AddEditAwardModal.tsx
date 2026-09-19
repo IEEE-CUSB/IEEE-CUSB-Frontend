@@ -25,7 +25,7 @@ const emptyForm = (): AwardFormValues => ({
   title: '',
   description: '',
   won_count: '',
-  year: String(new Date().getFullYear()),
+  years: String(new Date().getFullYear()),
   source: AwardSource.EGYPT_SECTION,
 });
 
@@ -35,7 +35,7 @@ const awardToForm = (award?: Award): AwardFormValues => {
     title: award.title,
     description: award.description,
     won_count: String(award.won_count ?? 0),
-    year: String(award.year ?? new Date().getFullYear()),
+    years: award.years ? award.years.join(', ') : String(new Date().getFullYear()),
     source: award.source ?? AwardSource.EGYPT_SECTION,
   };
 };
@@ -60,12 +60,12 @@ const validate = (values: AwardFormValues): AwardFormErrors => {
   const count = Number(values.won_count);
   if (values.won_count === '' || isNaN(count) || !Number.isInteger(count) || count < 1)
     errors.won_count = 'Times Won is required and must be at least 1.';
-  if (!values.year.trim()) {
-    errors.year = 'Year is required.';
+  if (!values.years.trim()) {
+    errors.years = 'Years are required.';
   } else {
-    const y = Number(values.year);
-    if (isNaN(y) || y < 1900 || y > 2100)
-      errors.year = 'Enter a valid year (1900–2100).';
+    const yearsArr = values.years.split(',').map(y => Number(y.trim()));
+    if (yearsArr.some(y => isNaN(y) || y < 1900 || y > 2100))
+      errors.years = 'Enter valid years (comma separated, e.g. 2025, 2024).';
   }
   return errors;
 };
@@ -163,7 +163,7 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
       title: formValues.title.trim(),
       description: formValues.description.trim(),
       won_count: formValues.won_count !== '' ? Number(formValues.won_count) : 0,
-      year: Number(formValues.year),
+      years: formValues.years.split(',').map(y => Number(y.trim())),
       source: formValues.source,
     };
 
@@ -233,15 +233,15 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
             />
           </div>
 
-          {/* Year & Source */}
+          {/* Years */}
           <div>
             <InputField
-              label="Year"
-              value={formValues.year}
-              placeholder="2024"
-              onChange={handleChange('year')}
-              id="award-year"
-              error={errors.year}
+              label="Years (comma separated)"
+              value={formValues.years}
+              placeholder="2025, 2024"
+              onChange={handleChange('years')}
+              id="award-years"
+              error={errors.years}
               darkMode={isDark}
             />
           </div>

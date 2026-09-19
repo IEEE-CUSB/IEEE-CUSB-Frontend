@@ -3,7 +3,11 @@ import trophy from '../../../assets/IEEE_Trophy.png';
 import type { Award } from '@/shared/types/award.types';
 
 function TrophyCard({ award, darkMode }: { award: Award; darkMode: boolean }) {
-  const year = new Date(award.created_at).getFullYear();
+  const yearsText = award.years && award.years.length > 0
+    ? award.years.length > 3
+      ? `${Math.min(...award.years)} - ${Math.max(...award.years)}`
+      : award.years.sort((a,b) => b-a).join(', ')
+    : new Date(award.created_at).getFullYear();
   return (
     <div className="flex flex-col items-center pt-4 sm:pt-6 md:pt-8">
       <motion.div
@@ -49,7 +53,7 @@ function TrophyCard({ award, darkMode }: { award: Award; darkMode: boolean }) {
             {award.title}
           </motion.h4>
           <div className="text-[10px] sm:text-xs md:text-sm font-semibold tracking-wide text-info uppercase mb-1.5 sm:mb-2 line-clamp-1">
-            {year}
+            {yearsText}
           </div>
           <p
             className={`text-[10px] sm:text-xs md:text-sm leading-relaxed line-clamp-2 ${
