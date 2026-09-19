@@ -50,7 +50,7 @@ export interface AwardFormValues {
   description: string;
   won_count: string;
   years: string;
-  details: string;
+  details: { year: string; text: string }[];
   source: AwardSource;
 }
 

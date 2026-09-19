@@ -26,18 +26,23 @@ const emptyForm = (): AwardFormValues => ({
   description: '',
   won_count: '',
   years: String(new Date().getFullYear()),
-  details: '{}',
+  details: [],
   source: AwardSource.EGYPT_SECTION,
 });
 
 const awardToForm = (award?: Award): AwardFormValues => {
   if (!award) return emptyForm();
+  
+  const detailsArray = award.details
+    ? Object.entries(award.details).map(([year, text]) => ({ year, text: text as string }))
+    : [];
+
   return {
     title: award.title,
     description: award.description,
     won_count: String(award.won_count ?? 0),
     years: award.years ? award.years.join(', ') : String(new Date().getFullYear()),
-    details: award.details ? JSON.stringify(award.details, null, 2) : '{}',
+    details: detailsArray,
     source: award.source ?? AwardSource.EGYPT_SECTION,
   };
 };
@@ -68,14 +73,6 @@ const validate = (values: AwardFormValues): AwardFormErrors => {
     const yearsArr = values.years.split(',').map(y => Number(y.trim()));
     if (yearsArr.some(y => isNaN(y) || y < 1900 || y > 2100))
       errors.years = 'Enter valid years (comma separated, e.g. 2025, 2024).';
-  }
-  
-  if (values.details.trim()) {
-    try {
-      JSON.parse(values.details);
-    } catch {
-      errors.details = 'Details must be a valid JSON object.';
-    }
   }
   
   return errors;
@@ -129,10 +126,31 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
       if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
     };
 
-  const handleTextAreaChange = (field: 'description' | 'details') => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextAreaChange = (field: 'description') => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFormValues(prev => ({ ...prev, [field]: e.target.value }));
     if (errors[field])
       setErrors(prev => ({ ...prev, [field]: undefined }));
+  };
+
+  const addDetail = () => {
+    setFormValues(prev => ({ ...prev, details: [...prev.details, { year: '', text: '' }] }));
+  };
+
+  const removeDetail = (index: number) => {
+    setFormValues(prev => {
+      const newDetails = [...prev.details];
+      newDetails.splice(index, 1);
+      return { ...prev, details: newDetails };
+    });
+  };
+
+  const updateDetail = (index: number, field: 'year' | 'text', value: string) => {
+    setFormValues(prev => {
+      const newDetails = [...prev.details];
+      newDetails[index] = { ...newDetails[index], [field]: value };
+      return { ...prev, details: newDetails };
+    });
+    if (errors.details) setErrors(prev => ({ ...prev, details: undefined }));
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,7 +193,9 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
       description: formValues.description.trim(),
       won_count: formValues.won_count !== '' ? Number(formValues.won_count) : 0,
       years: formValues.years.split(',').map(y => Number(y.trim())),
-      details: formValues.details.trim() ? JSON.parse(formValues.details) : undefined,
+      details: formValues.details
+        .filter(curr => curr.year.trim() && curr.text.trim())
+        .reduce((acc, curr) => ({ ...acc, [curr.year.trim()]: curr.text.trim() }), {} as Record<string, string>),
       source: formValues.source,
     };
 
@@ -313,15 +333,50 @@ const AddEditAwardModal: React.FC<AddEditAwardModalProps> = ({
 
           {/* Details */}
           <div className="md:col-span-2">
-            <TextArea
-              label="Details (JSON)"
-              value={formValues.details}
-              placeholder='{ "2025": "1st place" }'
-              onChange={handleTextAreaChange('details')}
-              id="award-details"
-              error={errors.details as string | undefined}
-              darkMode={isDark}
-            />
+            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              Winning Details (Optional)
+            </label>
+            <div className={`space-y-3 p-3 rounded-lg border ${isDark ? 'border-gray-700 bg-gray-800/50' : 'border-gray-200 bg-gray-50'}`}>
+              {formValues.details.map((detail, index) => (
+                <div key={index} className="flex gap-2 items-start">
+                  <div className="w-1/3">
+                    <InputField
+                      value={detail.year}
+                      placeholder="Year (e.g. 2025)"
+                      onChange={(e) => updateDetail(index, 'year', e.target.value)}
+                      id={`detail-year-${index}`}
+                      darkMode={isDark}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <InputField
+                      value={detail.text}
+                      placeholder="Detail (e.g. 1st place)"
+                      onChange={(e) => updateDetail(index, 'text', e.target.value)}
+                      id={`detail-text-${index}`}
+                      darkMode={isDark}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeDetail(index)}
+                    className={`mt-1 p-2 rounded-md ${isDark ? 'text-red-400 hover:bg-red-400/10' : 'text-red-500 hover:bg-red-50'}`}
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addDetail}
+                className={`text-sm font-medium px-3 py-1.5 rounded-md ${isDark ? 'text-primary-light hover:bg-primary-900/30' : 'text-primary hover:bg-primary/10'}`}
+              >
+                + Add Detail
+              </button>
+            </div>
+            {errors.details && (
+              <p className="mt-1 text-xs text-red-500">{errors.details}</p>
+            )}
           </div>
 
           {/* Award Image */}
