@@ -16,11 +16,11 @@ function TrophyCard({ award, darkMode }: { award: Award; darkMode: boolean }) {
         className="flex flex-col items-center w-full cursor-pointer"
       >
         {/* Trophy Image */}
-        <div className={`relative flex justify-end items-end rounded-lg`}>
+        <div className={`relative flex justify-end items-end rounded-lg -mb-2 z-10`}>
           <img
             src={award.image_url || trophy}
             alt={award.title}
-            className="w-24 h-32 sm:w-32 sm:h-40 md:w-36 md:h-44 lg:w-40 lg:h-48 object-contain"
+            className="w-28 h-36 sm:w-36 sm:h-44 md:w-40 md:h-48 lg:w-48 lg:h-56 object-contain"
           />
 
           {award.won_count > 0 && (
