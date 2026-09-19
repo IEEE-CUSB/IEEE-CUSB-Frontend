@@ -2,11 +2,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useVacancyById } from '@/shared/queries/recruitment/recruitment.queries';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { HiBriefcase, HiArrowLeft } from 'react-icons/hi';
-import { Button } from '@/shared/components/ui/Button';
-import { Loader } from '@/shared/components/ui/Loader';
+import { Button } from '@ieee-ui/ui';
+import { Loader } from '@ieee-ui/ui';
 import { motion } from 'framer-motion';
 import { VacancyApplicationForm } from '@/features/membership/components/VacancyApplicationForm';
-import { useAuth } from '@/shared/hooks/useAuth';
+import { useAppSelector } from '@/shared/store/hooks';
 import { useGetUserApplications } from '@/shared/queries/users/users.queries';
 import { Application } from '@/shared/types/recruitment.types';
 
@@ -14,7 +14,7 @@ export const VacancyDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isDark } = useTheme();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   
   const { data: vacancy, isLoading, error } = useVacancyById(id!);
   

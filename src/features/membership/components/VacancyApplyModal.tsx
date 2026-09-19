@@ -1,4 +1,4 @@
-import { Modal } from '@/shared/components/ui/Modal';
+import { Modal } from '@ieee-ui/ui';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { Vacancy } from '@/shared/types/recruitment.types';
 import { VacancyApplicationForm } from './VacancyApplicationForm';
@@ -25,7 +25,7 @@ export const VacancyApplyModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title={`Apply for ${vacancy.title}`}
-      size="lg"
+      size="large"
     >
       <div className="space-y-6">
         <div className={`p-4 rounded-xl border ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>

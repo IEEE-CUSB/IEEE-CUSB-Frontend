@@ -246,7 +246,7 @@ export const useDeleteVacancyImage = () => {
 export const useVacancyById = (id: string) => {
   return useQuery({
     queryKey: ['vacancy', id],
-    queryFn: () => getVacancyById(id),
+    queryFn: () => api.getVacancyById(id),
     enabled: !!id,
   });
 };
