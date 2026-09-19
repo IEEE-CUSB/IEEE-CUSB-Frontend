@@ -91,13 +91,13 @@ export const TrophyRow = ({
         {/* Trophy Image */}
         <div className="flex flex-col items-center w-full md:w-1/2">
           <div
-            className="relative flex justify-end items-end rounded-lg -mb-2 z-10"
+            className="relative flex justify-end items-end rounded-lg z-10"
             ref={imgRef}
           >
             <img
               src={award.image_url || trophy}
               alt={award.title}
-              className="w-32 h-40 sm:w-40 sm:h-48 md:w-48 md:h-56 lg:w-56 lg:h-64 object-contain"
+              className="w-24 h-32 sm:w-32 sm:h-40 md:w-36 md:h-44 lg:w-40 lg:h-48 object-contain scale-[1.15] sm:scale-[1.25] origin-bottom translate-y-2 sm:translate-y-4"
             />
             {award.won_count > 0 ? (
               <div
