@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi';
 import { loginSchema, type LoginFormData } from '@/features/auth/schemas';
 import { useLogin } from '@/shared/queries/auth';
 import { Button, InputField } from '@ieee-ui/ui';

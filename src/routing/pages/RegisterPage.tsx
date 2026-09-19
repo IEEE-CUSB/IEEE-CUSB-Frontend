@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi';
 import { registerSchema } from '@/features/auth/schemas';
 import { useRegister } from '@/shared/queries/auth';
 import { Button, InputField, Select } from '@ieee-ui/ui';
@@ -98,6 +99,18 @@ export const RegisterPage = () => {
             }`}
         />
       </div>
+
+      <Link
+        to="/"
+        className={`absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+          isDark
+            ? 'bg-gray-800/50 text-gray-300 hover:bg-gray-800 hover:text-white border border-gray-700/50'
+            : 'bg-white/50 text-gray-600 hover:bg-white hover:text-gray-900 border border-gray-200/50'
+        } backdrop-blur-md shadow-sm`}
+      >
+        <FiArrowLeft className="w-4 h-4" />
+        <span>Back to Home</span>
+      </Link>
 
       <div className="w-full max-w-2xl relative z-10">
         <div
