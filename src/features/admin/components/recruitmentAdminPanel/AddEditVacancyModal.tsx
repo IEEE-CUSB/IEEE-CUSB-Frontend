@@ -21,7 +21,7 @@ interface ExtendedAddEditVacancyModalProps {
   apiVacancy?: Vacancy;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: AddVacancy | UpdateVacancy, id?: string) => Promise<void>;
+  onSave: (data: AddVacancy | UpdateVacancy, id?: string) => Promise<string | undefined>;
   isPending?: boolean;
 }
 
@@ -306,15 +306,16 @@ export const AddEditVacancyModal: React.FC<ExtendedAddEditVacancyModalProps> = (
     };
 
     try {
-      await onSave(payload, vacancyId);
+      const savedId = await onSave(payload, vacancyId);
 
       // After save, handle image upload/delete if editing an existing vacancy
-      if (vacancyId) {
+      if (savedId) {
         const promises = [];
-        if (pendingImage) promises.push(uploadImageMutation.mutateAsync({ id: vacancyId, file: pendingImage }));
-        if (deleteImage) promises.push(deleteImageMutation.mutateAsync(vacancyId));
+        if (pendingImage) promises.push(uploadImageMutation.mutateAsync({ id: savedId, file: pendingImage }));
+        if (deleteImage) promises.push(deleteImageMutation.mutateAsync(savedId));
         await Promise.all(promises);
       }
+      onClose();
     } catch {
       setIsSaving(false);
     }

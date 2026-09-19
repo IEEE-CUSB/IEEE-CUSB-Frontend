@@ -73,16 +73,16 @@ const VacanciesTab = () => {
     setIsApplicationsModalOpen(true);
   };
 
-  const handleSave = async (data: AddVacancy | UpdateVacancy, id?: string) => {
+  const handleSave = async (data: AddVacancy | UpdateVacancy, id?: string): Promise<string | undefined> => {
     if (id) {
       await updateMutation.mutateAsync({ id, data });
+      return id;
     } else {
-      await createMutation.mutateAsync({
+      const newV = await createMutation.mutateAsync({
         data: data as AddVacancy,
       });
+      return newV.id;
     }
-
-    setIsAddEditOpen(false);
   };
 
   const handleConfirmDelete = async () => {

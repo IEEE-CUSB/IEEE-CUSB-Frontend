@@ -24,6 +24,7 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<Record<string, File>>({});
 
   const applyMutation = useApplyToVacancy();
   
@@ -39,7 +40,7 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
     }
   };
 
-  const handleFileChange = async (questionId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (questionId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -48,17 +49,8 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
       return;
     }
 
-    try {
-      setIsSubmitting(true);
-      const res = await uploadApplicationFile(file);
-      handleInputChange(questionId, res.url);
-      toast.success('File uploaded successfully!');
-    } catch (err: any) {
-      setErrors(prev => ({ ...prev, [questionId]: 'Failed to upload file. Please try again.' }));
-      toast.error('Failed to upload file');
-    } finally {
-      setIsSubmitting(false);
-    }
+    setPendingFiles(prev => ({ ...prev, [questionId]: file }));
+    handleInputChange(questionId, file.name);
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -77,14 +69,30 @@ export const VacancyApplicationForm = ({ vacancy, isDark, onSuccess, onCancel, h
     }
 
     try {
+      setIsSubmitting(true);
+      const finalAnswers = { ...answers };
+      
+      for (const [qId, file] of Object.entries(pendingFiles)) {
+        try {
+          const res = await uploadApplicationFile(file);
+          finalAnswers[qId] = res.url;
+        } catch (err) {
+          toast.error('Failed to upload file for a question.');
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       await applyMutation.mutateAsync({
         vacancyId: vacancy.id,
-        data: { extra_data: Object.fromEntries(Object.entries(answers).map(([qId, answer]) => [vacancy.questions?.find(q => q.id === qId)?.question_text || qId, answer])) }
+        data: { extra_data: Object.fromEntries(Object.entries(finalAnswers).map(([qId, answer]) => [vacancy.questions?.find(q => q.id === qId)?.question_text || qId, answer])) }
       });
       toast.success('Successfully applied to ' + vacancy.title);
       if (onSuccess) onSuccess();
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to submit application');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
