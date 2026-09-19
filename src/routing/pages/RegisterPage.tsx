@@ -109,11 +109,13 @@ export const RegisterPage = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <img
-                src={logo}
-                alt="IEEE CUSB Logo"
-                className={`h-20 w-20 object-contain transition-all duration-300 ${isDark ? 'drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]' : ''}`}
-              />
+              <Link to="/" className="inline-block hover:scale-105 transition-transform duration-300">
+                <img
+                  src={logo}
+                  alt="IEEE CUSB Logo"
+                  className={`h-20 w-20 object-contain transition-all duration-300 ${isDark ? 'drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]' : ''}`}
+                />
+              </Link>
             </div>
             <h1
               className={`text-3xl font-bold mb-2 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}

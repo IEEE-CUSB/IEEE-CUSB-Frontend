@@ -45,6 +45,18 @@ export const LoginPage = () => {
         />
       </div>
 
+      <Link
+        to="/"
+        className={`absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+          isDark
+            ? 'bg-gray-800/50 text-gray-300 hover:bg-gray-800 hover:text-white border border-gray-700/50'
+            : 'bg-white/50 text-gray-600 hover:bg-white hover:text-gray-900 border border-gray-200/50'
+        } backdrop-blur-md shadow-sm`}
+      >
+        <FiArrowLeft className="w-4 h-4" />
+        <span>Back to Home</span>
+      </Link>
+
       <div className="w-full max-w-md relative z-10">
         <div
           className={`backdrop-blur-xl rounded-2xl shadow-2xl border transition-all duration-300 p-8 ${
@@ -56,11 +68,13 @@ export const LoginPage = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <img
-                src={logo}
-                alt="IEEE CUSB Logo"
-                className={`h-20 w-20 object-contain transition-all duration-300 ${isDark ? 'drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]' : ''}`}
-              />
+              <Link to="/" className="inline-block hover:scale-105 transition-transform duration-300">
+                <img
+                  src={logo}
+                  alt="IEEE CUSB Logo"
+                  className={`h-20 w-20 object-contain transition-all duration-300 ${isDark ? 'drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]' : ''}`}
+                />
+              </Link>
             </div>
             <h1
               className={`text-3xl font-bold mb-2 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}
