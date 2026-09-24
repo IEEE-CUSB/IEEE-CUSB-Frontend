@@ -85,8 +85,8 @@ export const VacancyDetailsPage = () => {
               <h2 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Role Description</h2>
               {vacancy.description ? (
                 <div
-                  className={`prose prose-sm md:prose-base max-w-none ${isDark ? 'prose-invert text-gray-300' : 'text-gray-600'}`}
-                  dangerouslySetInnerHTML={{ __html: vacancy.description }}
+                  className={`prose prose-sm md:prose-base max-w-none break-words ${isDark ? 'prose-invert text-gray-300' : 'text-gray-600'}`}
+                  dangerouslySetInnerHTML={{ __html: vacancy.description.replace(/&nbsp;/g, ' ') }}
                 />
               ) : (
                 <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No description provided.</p>
