@@ -54,10 +54,10 @@ export const VacancyDetailsPage = () => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`rounded-2xl overflow-hidden border shadow-lg ${isDark ? 'bg-gray-800 border-gray-700 shadow-gray-900/50' : 'bg-white border-gray-200 shadow-gray-200/50'}`}
+        className={`rounded-2xl border shadow-lg ${isDark ? 'bg-gray-800 border-gray-700 shadow-gray-900/50' : 'bg-white border-gray-200 shadow-gray-200/50'}`}
       >
         {/* Header Image */}
-        <div className={`w-full h-64 md:h-80 relative flex-shrink-0 ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+        <div className={`w-full h-64 md:h-80 relative flex-shrink-0 rounded-t-2xl overflow-hidden ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
           {vacancy.image_url ? (
             <img src={vacancy.image_url} alt={vacancy.title} className="w-full h-full object-cover" />
           ) : (
@@ -79,9 +79,9 @@ export const VacancyDetailsPage = () => {
         </div>
 
         <div className="p-6 md:p-10">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="flex flex-col lg:flex-row gap-10 items-start">
             {/* Left side: Description */}
-            <div className="lg:col-span-2">
+            <div className="flex-1 w-full min-w-0">
               <h2 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Role Description</h2>
               {vacancy.description ? (
                 <div
@@ -94,8 +94,8 @@ export const VacancyDetailsPage = () => {
             </div>
 
             {/* Right side: Apply Form (embedded) */}
-            <div className="lg:col-span-1">
-              <div className={`sticky top-28 p-6 rounded-2xl border shadow-sm ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+            <div className="w-full lg:w-[400px] flex-shrink-0">
+              <div className={`sticky top-24 p-6 rounded-2xl border shadow-sm ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
                 <h2 className={`text-xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>Apply for this Role</h2>
                 <VacancyApplicationForm
                   vacancy={vacancy}
