@@ -79,9 +79,9 @@ export const VacancyDetailsPage = () => {
         </div>
 
         <div className="p-6 md:p-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* Left side: Description */}
-            <div>
+            <div className="lg:col-span-2">
               <h2 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Role Description</h2>
               {vacancy.description ? (
                 <div
@@ -94,8 +94,8 @@ export const VacancyDetailsPage = () => {
             </div>
 
             {/* Right side: Apply Form (embedded) */}
-            <div>
-              <div className={`p-6 rounded-2xl border shadow-sm ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
+            <div className="lg:col-span-1">
+              <div className={`sticky top-28 p-6 rounded-2xl border shadow-sm ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
                 <h2 className={`text-xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>Apply for this Role</h2>
                 <VacancyApplicationForm
                   vacancy={vacancy}
