@@ -149,41 +149,7 @@ export const useLogout = () => {
   });
 };
 
-/**
- * Hook to send email OTP for verification
- * Requires authentication — backend gets email from JWT
- */
-export const useSendEmailOTP = () => {
-  return useMutation({
-    mutationFn: authApi.sendEmailOTP,
-    onSuccess: () => {
-      toast.success('OTP sent to your email. Please check your inbox.');
-    },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.message ||
-        'Failed to send OTP. Please try again.';
-      toast.error(message);
-    },
-  });
-};
 
-/**
- * Hook to verify email with OTP
- */
-export const useVerifyEmailOTP = () => {
-  return useMutation({
-    mutationFn: authApi.verifyEmailOTP,
-    onSuccess: () => {
-      toast.success('Email verified successfully!');
-    },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.message || 'Invalid OTP. Please try again.';
-      toast.error(message);
-    },
-  });
-};
 
 /**
  * Hook to send password reset OTP
@@ -277,12 +243,12 @@ export const useCompleteOAuthProfile = () => {
 };
 
 /**
- * Hook to send email verification OTP (public — no JWT required).
+ * Hook to send email verification OTP.
  * Used right after registration.
  */
-export const useSendEmailOTPPublic = () => {
+export const useSendEmailOTP = () => {
   return useMutation({
-    mutationFn: authApi.sendEmailOTPPublic,
+    mutationFn: authApi.sendEmailOTP,
     onError: (error: any) => {
       const message =
         error?.response?.data?.message ||
@@ -293,12 +259,12 @@ export const useSendEmailOTPPublic = () => {
 };
 
 /**
- * Hook to verify email OTP (public — no JWT required).
+ * Hook to verify email OTP.
  * Used right after registration.
  */
-export const useVerifyEmailOTPPublic = (onSuccess?: () => void) => {
+export const useVerifyEmailOTP = (onSuccess?: () => void) => {
   return useMutation({
-    mutationFn: authApi.verifyEmailOTPPublic,
+    mutationFn: authApi.verifyEmailOTP,
     onSuccess: () => {
       toast.success('Email verified! Please log in.');
       onSuccess?.();

@@ -7,7 +7,7 @@ import type {
   RegisterRequest,
   RefreshTokenResponse,
   SendOTPRequest,
-  VerifyOTPRequest,
+
   ResetPasswordRequest,
   ChangePasswordRequest,
   CompleteOAuthProfileRequest,
@@ -115,38 +115,22 @@ export const authApi = {
   },
 
   /**
-   * Send OTP to authenticated user's email for verification
-   * Requires JWT auth — backend gets email from the authenticated user
-   */
-  sendEmailOTP: async (): Promise<void> => {
-    await apiClient.post(API_ENDPOINTS.AUTH.SEND_EMAIL_OTP);
-  },
-
-  /**
-   * Verify email with OTP
-   * Requires JWT auth — backend gets user from the authenticated user
-   */
-  verifyEmailOTP: async (data: VerifyOTPRequest): Promise<void> => {
-    await apiClient.patch(API_ENDPOINTS.AUTH.VERIFY_EMAIL_OTP, data);
-  },
-
-  /**
-   * Send email verification OTP — PUBLIC (no JWT required).
+   * Send email verification OTP.
    * Used immediately after registration before any token exists.
    */
-  sendEmailOTPPublic: async (data: SendOTPRequest): Promise<void> => {
-    await apiClient.post(API_ENDPOINTS.AUTH.SEND_EMAIL_OTP_PUBLIC, data);
+  sendEmailOTP: async (data: SendOTPRequest): Promise<void> => {
+    await apiClient.post(API_ENDPOINTS.AUTH.SEND_EMAIL_OTP, data);
   },
 
   /**
-   * Verify email OTP — PUBLIC (no JWT required).
+   * Verify email OTP.
    * Used immediately after registration before any token exists.
    */
-  verifyEmailOTPPublic: async (data: {
+  verifyEmailOTP: async (data: {
     email: string;
     otp: string;
   }): Promise<void> => {
-    await apiClient.patch(API_ENDPOINTS.AUTH.VERIFY_EMAIL_OTP_PUBLIC, data);
+    await apiClient.patch(API_ENDPOINTS.AUTH.VERIFY_EMAIL_OTP, data);
   },
 
   /**
@@ -159,7 +143,7 @@ export const authApi = {
   /**
    * Check password reset OTP without resetting password
    */
-  checkPasswordOTP: async (data: VerifyOTPRequest): Promise<void> => {
+  checkPasswordOTP: async (data: { email: string; otp: string }): Promise<void> => {
     await apiClient.post(API_ENDPOINTS.AUTH.CHECK_PASSWORD_OTP, data);
   },
 

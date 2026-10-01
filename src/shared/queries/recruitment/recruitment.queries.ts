@@ -124,16 +124,35 @@ export const useUpdateApplicationStatus = (vacancyId: string) => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateStatus }) =>
       api.updateApplicationStatus(id, data),
-    onSuccess: () => {
-      toast.success('Application status updated successfully');
-      queryClient.invalidateQueries({
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries({
         queryKey: QUERY_KEYS.RECRUITMENT.ADMIN_VACANCY_APPLICATIONS(vacancyId),
       });
+      queryClient.setQueriesData(
+        { queryKey: QUERY_KEYS.RECRUITMENT.ADMIN_VACANCY_APPLICATIONS(vacancyId) },
+        (oldData: any) => {
+          if (!oldData || !oldData.data) return oldData;
+          return {
+            ...oldData,
+            data: oldData.data.map((app: any) =>
+              app.id === id ? { ...app, status: data.status } : app
+            ),
+          };
+        }
+      );
+    },
+    onSuccess: () => {
+      toast.success('Application status updated successfully');
     },
     onError: (error: any) => {
       toast.error(
         error?.response?.data?.message || 'Failed to update application status'
       );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.RECRUITMENT.ADMIN_VACANCY_APPLICATIONS(vacancyId),
+      });
     },
   });
 };

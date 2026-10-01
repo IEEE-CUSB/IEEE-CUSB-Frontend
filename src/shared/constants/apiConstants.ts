@@ -12,8 +12,6 @@ export const API_ENDPOINTS = {
     ME: '/auth/me',
     SEND_EMAIL_OTP: '/auth/otp/email/send',
     VERIFY_EMAIL_OTP: '/auth/otp/email/verify',
-    SEND_EMAIL_OTP_PUBLIC: '/auth/otp/email/send-public',
-    VERIFY_EMAIL_OTP_PUBLIC: '/auth/otp/email/verify-public',
     SEND_PASSWORD_OTP: '/auth/otp/password/send',
     CHECK_PASSWORD_OTP: '/auth/otp/password/check',
     RESET_PASSWORD: '/auth/password/reset',

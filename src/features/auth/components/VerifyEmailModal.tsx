@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiMail, FiX } from 'react-icons/fi';
 import { useTheme } from '@/shared/hooks/useTheme';
-import { useSendEmailOTPPublic, useVerifyEmailOTPPublic } from '@/shared/queries/auth';
+import { useSendEmailOTP, useVerifyEmailOTP } from '@/shared/queries/auth';
 import { OtpInput } from './OtpInput';
 import logo from '@/assets/logo.png';
 
@@ -33,8 +33,8 @@ export const VerifyEmailModal = ({ email, onClose }: VerifyEmailModalProps) => {
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
   const [canResend, setCanResend] = useState(false);
 
-  const { mutate: sendOTP, isPending: isSending } = useSendEmailOTPPublic();
-  const { mutate: verifyOTP, isPending: isVerifying } = useVerifyEmailOTPPublic(
+  const { mutate: sendOTP, isPending: isSending } = useSendEmailOTP();
+  const { mutate: verifyOTP, isPending: isVerifying } = useVerifyEmailOTP(
     () => navigate('/login'),
   );
 
