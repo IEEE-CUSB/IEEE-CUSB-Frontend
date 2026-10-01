@@ -67,18 +67,21 @@ export const useLogin = () => {
 };
 
 /**
- * Hook for user registration
- * Note: Backend does NOT return tokens on registration.
- * After successful registration, user is redirected to login.
+ * Hook for user registration.
+ * After success, calls onSuccess({ email }) so the page can open the OTP modal.
+ * Navigation happens after email verification, not immediately.
  */
-export const useRegister = () => {
-  const navigate = useNavigate();
-
+export const useRegister = (onSuccess?: (email: string) => void) => {
   return useMutation({
     mutationFn: authApi.register,
-    onSuccess: () => {
-      toast.success('Registration successful! Please log in to continue.');
-      navigate('/login');
+    onSuccess: (_data, variables) => {
+      // Extract email from whatever was passed (FormData or plain object)
+      const email =
+        variables instanceof FormData
+          ? (variables.get('email') as string)
+          : (variables as any).email;
+      toast.success('Account created! Please verify your email.');
+      onSuccess?.(email);
     },
     onError: (error: any) => {
       const message =
@@ -201,6 +204,15 @@ export const useSendPasswordOTP = () => {
 };
 
 /**
+ * Hook to check password reset OTP
+ */
+export const useCheckPasswordOTP = () => {
+  return useMutation({
+    mutationFn: authApi.checkPasswordOTP,
+  });
+};
+
+/**
  * Hook to reset password with OTP
  */
 export const useResetPassword = () => {
@@ -259,6 +271,42 @@ export const useCompleteOAuthProfile = () => {
       const message =
         error?.response?.data?.message ||
         'Failed to complete profile. Please try again.';
+      toast.error(message);
+    },
+  });
+};
+
+/**
+ * Hook to send email verification OTP (public — no JWT required).
+ * Used right after registration.
+ */
+export const useSendEmailOTPPublic = () => {
+  return useMutation({
+    mutationFn: authApi.sendEmailOTPPublic,
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message ||
+        'Failed to send OTP. Please try again.';
+      toast.error(message);
+    },
+  });
+};
+
+/**
+ * Hook to verify email OTP (public — no JWT required).
+ * Used right after registration.
+ */
+export const useVerifyEmailOTPPublic = (onSuccess?: () => void) => {
+  return useMutation({
+    mutationFn: authApi.verifyEmailOTPPublic,
+    onSuccess: () => {
+      toast.success('Email verified! Please log in.');
+      onSuccess?.();
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message ||
+        'Invalid or expired OTP. Please try again.';
       toast.error(message);
     },
   });

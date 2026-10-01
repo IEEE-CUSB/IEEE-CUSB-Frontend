@@ -131,10 +131,36 @@ export const authApi = {
   },
 
   /**
+   * Send email verification OTP — PUBLIC (no JWT required).
+   * Used immediately after registration before any token exists.
+   */
+  sendEmailOTPPublic: async (data: SendOTPRequest): Promise<void> => {
+    await apiClient.post(API_ENDPOINTS.AUTH.SEND_EMAIL_OTP_PUBLIC, data);
+  },
+
+  /**
+   * Verify email OTP — PUBLIC (no JWT required).
+   * Used immediately after registration before any token exists.
+   */
+  verifyEmailOTPPublic: async (data: {
+    email: string;
+    otp: string;
+  }): Promise<void> => {
+    await apiClient.patch(API_ENDPOINTS.AUTH.VERIFY_EMAIL_OTP_PUBLIC, data);
+  },
+
+  /**
    * Send OTP to email for password reset (public endpoint)
    */
   sendPasswordOTP: async (data: SendOTPRequest): Promise<void> => {
     await apiClient.post(API_ENDPOINTS.AUTH.SEND_PASSWORD_OTP, data);
+  },
+
+  /**
+   * Check password reset OTP without resetting password
+   */
+  checkPasswordOTP: async (data: VerifyOTPRequest): Promise<void> => {
+    await apiClient.post(API_ENDPOINTS.AUTH.CHECK_PASSWORD_OTP, data);
   },
 
   /**

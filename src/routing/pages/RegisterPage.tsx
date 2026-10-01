@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
@@ -10,6 +11,7 @@ import FacultyList from '@/constants/facultyList';
 import DepartmentList from '@/constants/departmentList';
 import logo from '@/assets/logo.png';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { VerifyEmailModal } from '@/features/auth/components/VerifyEmailModal';
 
 /**
  * Register Page Component
@@ -17,7 +19,11 @@ import { useTheme } from '@/shared/hooks/useTheme';
  */
 export const RegisterPage = () => {
   const { isDark } = useTheme();
-  const { mutate: register, isPending } = useRegister();
+  const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
+
+  const { mutate: register, isPending } = useRegister(email => {
+    setVerifyEmail(email);
+  });
 
   const {
     register: registerField,
@@ -537,6 +543,14 @@ export const RegisterPage = () => {
           </p>
         </div>
       </div>
+
+      {/* Email verification modal — shown after successful registration */}
+      {verifyEmail && (
+        <VerifyEmailModal
+          email={verifyEmail}
+          onClose={() => setVerifyEmail(null)}
+        />
+      )}
     </div>
   );
 };
