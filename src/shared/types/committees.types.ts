@@ -95,6 +95,10 @@ export interface BoardMember {
   email: string;
   role: string;
   image_url?: string;
+  bio?: string;
+  linkedin?: string;
+  github?: string;
+  twitter?: string;
   display_order: number;
   created_at: string;
   updated_at: string;
@@ -105,6 +109,10 @@ export interface CreateBoardMember {
   email: string;
   role: string;
   image_url?: string;
+  bio?: string;
+  linkedin?: string;
+  github?: string;
+  twitter?: string;
   display_order?: number;
 }
 
@@ -113,6 +121,10 @@ export interface UpdateBoardMember {
   email?: string;
   role?: string;
   image_url?: string;
+  bio?: string;
+  linkedin?: string;
+  github?: string;
+  twitter?: string;
   display_order?: number;
 }
 

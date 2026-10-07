@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CommitteeCard } from './CommitteeCard';
 import { SectionIcon } from './SectionIcon';
 import { HiChevronDown } from 'react-icons/hi';
+import { MemberCard } from '@/shared/components/MemberCard';
 import type {
     BoardMember,
     CommitteeCategory,
@@ -57,23 +58,34 @@ export const OrgChartView = ({
 
     const activeSection = sections.find((s) => s.name === expandedSection);
 
-    const safeBoardMember = (m: any, defaultRole: string) => {
+    const safeBoardMember = (m: any) => {
         const name = m?.name || 'Vacant';
         return {
-            label: m?.role || defaultRole,
-            subtitle: name,
-            avatar: m?.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0f172a&color=fff&size=256`,
+            id: m?.id || name,
+            name,
+            role: m?.role || '',
+            bio: m?.bio || '',
+            image: m?.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0f172a&color=fff&size=256`,
+            socials: {
+                linkedin: m?.linkedin,
+                github: m?.github,
+                twitter: m?.twitter,
+            },
         };
     };
 
     const hasBoardMembers = boardMembers && boardMembers.length > 0;
     
-    // Group board members into rows (first row has 2, subsequent rows have 2)
+    // Sort board members by display_order, then group into rows (first row has 2, subsequent rows have 2)
+    const sortedBoardMembers = [...boardMembers].sort(
+        (a, b) => (a.display_order ?? 999) - (b.display_order ?? 999)
+    );
+
     const boardRows = [];
     if (hasBoardMembers) {
-        boardRows.push([boardMembers[0], boardMembers[1]].filter(Boolean));
-        for (let i = 2; i < boardMembers.length; i += 2) {
-            boardRows.push([boardMembers[i], boardMembers[i + 1]].filter(Boolean));
+        boardRows.push([sortedBoardMembers[0], sortedBoardMembers[1]].filter(Boolean));
+        for (let i = 2; i < sortedBoardMembers.length; i += 2) {
+            boardRows.push([sortedBoardMembers[i], sortedBoardMembers[i + 1]].filter(Boolean));
         }
     }
 
@@ -81,17 +93,24 @@ export const OrgChartView = ({
         <div className="max-w-6xl mx-auto px-6 py-16">
             {hasBoardMembers && (
                 <>
+                    {/* ── Section header ─────────────────────────────── */}
+                    <motion.div
+                        className="flex items-center justify-center gap-3 mb-12"
+                        {...inView(0)}
+                    >
+                        <span className="w-1.5 h-8 bg-primary rounded-full shrink-0" />
+                        <h2 className="text-2xl font-bold text-foreground">Executive Board</h2>
+                    </motion.div>
+
                     {/* ═══════════════ Level 1: Chair & Vice Chair ═══════════════ */}
                     {boardRows[0] && boardRows[0].length > 0 && (
-                        <motion.div className="flex justify-center" {...inView(0)}>
-                            <OrgNode
-                                label="Chair & Vice Chair"
-                                subtitle={boardRows[0].map(m => safeBoardMember(m, '').subtitle).join(' & ')}
-                                avatar={safeBoardMember(boardRows[0][0], '').avatar}
-                                highlighted
-                                size="lg"
-                            />
-                        </motion.div>
+                        <div className="flex justify-center gap-16 sm:gap-20">
+                            {boardRows[0].map((m, i) => (
+                                <motion.div key={i} className="flex flex-col items-center z-10" {...inView(i * 0.1)}>
+                                    <MemberCard member={safeBoardMember(m)} size="md" />
+                                </motion.div>
+                            ))}
+                        </div>
                     )}
 
                     {boardRows.slice(1).map((row, idx) => (
@@ -99,13 +118,13 @@ export const OrgChartView = ({
                             <Connector />
                             {row.length === 2 ? (
                                 <TwoNodeRow
-                                    left={safeBoardMember(row[0], '')}
-                                    right={safeBoardMember(row[1], '')}
+                                    left={safeBoardMember(row[0])}
+                                    right={safeBoardMember(row[1])}
                                     delay={0.15 + (idx * 0.1)}
                                 />
                             ) : (
-                                <motion.div className="flex justify-center" {...inView(0.15 + (idx * 0.1))}>
-                                    <OrgNode {...safeBoardMember(row[0], '')} size="md" />
+                                <motion.div className="flex justify-center z-10" {...inView(0.15 + (idx * 0.1))}>
+                                    <MemberCard member={safeBoardMember(row[0])} size="sm" />
                                 </motion.div>
                             )}
                         </div>
@@ -262,8 +281,8 @@ const Connector = ({ height = 'h-8' }: { height?: string }) => (
 // ─── Two-Node Row with proper horizontal connector ──────────────────────────
 
 interface TwoNodeRowProps {
-    left: { label: string; subtitle: string; avatar: string };
-    right: { label: string; subtitle: string; avatar: string };
+    left: any;
+    right: any;
     delay?: number;
 }
 
@@ -275,66 +294,14 @@ const TwoNodeRow = ({ left, right, delay = 0 }: TwoNodeRowProps) => (
         </div>
         {/* Nodes */}
         <div className="flex justify-center gap-16 sm:gap-20">
-            <motion.div className="flex flex-col items-center" {...inView(delay + 0.1)}>
+            <motion.div className="flex flex-col items-center z-10" {...inView(delay + 0.1)}>
                 <div className="w-px h-5 bg-border" />
-                <OrgNode label={left.label} subtitle={left.subtitle} avatar={left.avatar} />
+                <MemberCard member={left} size="sm" />
             </motion.div>
-            <motion.div className="flex flex-col items-center" {...inView(delay + 0.2)}>
+            <motion.div className="flex flex-col items-center z-10" {...inView(delay + 0.2)}>
                 <div className="w-px h-5 bg-border" />
-                <OrgNode label={right.label} subtitle={right.subtitle} avatar={right.avatar} />
+                <MemberCard member={right} size="sm" />
             </motion.div>
         </div>
     </div>
-);
-
-// ─── Org Chart Node ─────────────────────────────────────────────────────────
-
-interface OrgNodeProps {
-    label: string;
-    subtitle?: string;
-    avatar?: string;
-    highlighted?: boolean;
-    size?: 'md' | 'lg';
-}
-
-const OrgNode = ({ label, subtitle, avatar, highlighted, size = 'md' }: OrgNodeProps) => (
-    <motion.div
-        className={`flex items-center rounded-2xl border-2 shadow-sm transition-shadow ${
-            size === 'lg' ? 'gap-5 px-8 py-5' : 'gap-4 px-6 py-4'
-        } ${
-            highlighted
-                ? 'bg-primary border-primary text-white shadow-lg shadow-primary/25'
-                : 'bg-card border-border text-foreground hover:shadow-md'
-        }`}
-        whileHover={{ y: -2, scale: 1.02 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-    >
-        {avatar && (
-            <img
-                src={avatar}
-                alt={label}
-                className={`rounded-full object-cover flex-shrink-0 border-2 ${
-                    size === 'lg' ? 'w-16 h-16' : 'w-14 h-14'
-                } ${highlighted ? 'border-white/30' : 'border-primary/20'}`}
-            />
-        )}
-        <div>
-            <p
-                className={`font-bold ${size === 'lg' ? 'text-lg' : 'text-base'} ${
-                    highlighted ? 'text-white' : 'text-foreground'
-                }`}
-            >
-                {label}
-            </p>
-            {subtitle && (
-                <p
-                    className={`${size === 'lg' ? 'text-base' : 'text-sm'} ${
-                        highlighted ? 'text-white/80' : 'text-muted-foreground'
-                    }`}
-                >
-                    {subtitle}
-                </p>
-            )}
-        </div>
-    </motion.div>
 );
