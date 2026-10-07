@@ -45,9 +45,13 @@ export const TabbedView = ({
               member={{
                 name: exec.name,
                 role: exec.role,
-                bio: '',
+                bio: exec.bio || '',
                 image: exec.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(exec.name)}&background=0f172a&color=fff&size=256`,
-                socials: {},
+                socials: {
+                  linkedin: exec.linkedin,
+                  github: exec.github,
+                  twitter: exec.twitter,
+                },
               }}
               roleOverride={exec.role}
               delay={i * 0.08}

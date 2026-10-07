@@ -26,6 +26,10 @@ interface FormValues {
   email: string;
   role: string;
   display_order: string;
+  bio: string;
+  linkedin: string;
+  github: string;
+  twitter: string;
 }
 
 const empty = (): FormValues => ({
@@ -33,6 +37,10 @@ const empty = (): FormValues => ({
   email: '',
   role: '',
   display_order: '0',
+  bio: '',
+  linkedin: '',
+  github: '',
+  twitter: '',
 });
 
 const toForm = (m?: BoardMember): FormValues =>
@@ -42,6 +50,10 @@ const toForm = (m?: BoardMember): FormValues =>
         email: m.email,
         role: m.role,
         display_order: String(m.display_order ?? 0),
+        bio: m.bio || '',
+        linkedin: m.linkedin || '',
+        github: m.github || '',
+        twitter: m.twitter || '',
       }
     : empty();
 
@@ -165,6 +177,10 @@ const AddEditBoardMemberModal: React.FC<Props> = ({
       email: form.email.trim(),
       role: form.role.trim(),
       display_order: Number(form.display_order) || 0,
+      bio: form.bio.trim() || undefined,
+      linkedin: form.linkedin.trim() || undefined,
+      github: form.github.trim() || undefined,
+      twitter: form.twitter.trim() || undefined,
     };
     onSave(payload, member?.id);
   };
@@ -217,6 +233,44 @@ const AddEditBoardMemberModal: React.FC<Props> = ({
             placeholder="0"
             onChange={handleChange('display_order')}
             id="board-order"
+            darkMode={isDark}
+          />
+          <div className="md:col-span-2">
+            <InputField
+              label="Bio (Optional)"
+              value={form.bio}
+              placeholder="e.g. Briefly describe this member..."
+              onChange={handleChange('bio')}
+              id="board-bio"
+              error={errors.bio}
+              darkMode={isDark}
+            />
+          </div>
+          <InputField
+            label="LinkedIn URL (Optional)"
+            value={form.linkedin}
+            placeholder="https://linkedin.com/in/..."
+            onChange={handleChange('linkedin')}
+            id="board-linkedin"
+            error={errors.linkedin}
+            darkMode={isDark}
+          />
+          <InputField
+            label="GitHub URL (Optional)"
+            value={form.github}
+            placeholder="https://github.com/..."
+            onChange={handleChange('github')}
+            id="board-github"
+            error={errors.github}
+            darkMode={isDark}
+          />
+          <InputField
+            label="Twitter URL (Optional)"
+            value={form.twitter}
+            placeholder="https://twitter.com/..."
+            onChange={handleChange('twitter')}
+            id="board-twitter"
+            error={errors.twitter}
             darkMode={isDark}
           />
         </div>
